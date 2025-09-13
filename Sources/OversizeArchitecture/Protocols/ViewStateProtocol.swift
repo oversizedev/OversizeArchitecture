@@ -5,8 +5,6 @@
 
 import SwiftUI
 
-// MARK: - ViewState
-
 @MainActor
 public protocol ViewStateProtocol: Sendable {}
 

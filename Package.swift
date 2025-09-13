@@ -12,10 +12,6 @@ let package = Package(
             name: "OversizeArchitecture",
             targets: ["OversizeArchitecture"]
         ),
-        .executable(
-            name: "OversizeArchitectureClient",
-            targets: ["OversizeArchitectureClient"]
-        ),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax.git", .upToNextMajor(from: "601.0.0")),
@@ -29,7 +25,6 @@ let package = Package(
             ]
         ),
         .target(name: "OversizeArchitecture", dependencies: ["OversizeArchitectureMacros"]),
-        .executableTarget(name: "OversizeArchitectureClient", dependencies: ["OversizeArchitecture"]),
         .testTarget(
             name: "OversizeArchitectureTests",
             dependencies: [
