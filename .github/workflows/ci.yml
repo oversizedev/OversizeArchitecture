@@ -20,7 +20,7 @@ jobs:
     uses: oversizedev/GithubWorkflows/.github/workflows/test.yml@main
     secrets: inherit
 
-  build-oversize-macro:
+  build:
     name: Build OversizeArchitecture
     needs:
       - tests
@@ -30,21 +30,10 @@ jobs:
       destination: platform=macOS,arch=arm64
     secrets: inherit
 
-  build-oversize-macro-client:
-    name: Build OversizeArchitectureClient
-    needs:
-      - tests
-    uses: oversizedev/GithubWorkflows/.github/workflows/build-swiftpm.yml@main
-    with:
-      package: OversizeArchitectureClient
-      destination: platform=macOS,arch=arm64
-    secrets: inherit
-
   bump:
     name: Bump version
     needs:
-      - build-oversize-macro
-      - build-oversize-macro-client
+      - build
     if: github.ref == 'refs/heads/main'
     uses: oversizedev/GithubWorkflows/.github/workflows/bump.yml@main
     secrets: inherit
