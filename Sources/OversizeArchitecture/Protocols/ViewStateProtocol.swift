@@ -3,8 +3,6 @@
 // ViewStateProtocol.swift, created on 04.07.2025
 //
 
-import SwiftUI
-
 @MainActor
 public protocol ViewStateProtocol: Sendable {}
 

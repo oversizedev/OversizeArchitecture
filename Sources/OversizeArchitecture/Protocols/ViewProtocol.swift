@@ -3,7 +3,6 @@
 // ViewProtocol.swift, created on 04.07.2025
 //
 
-import Foundation
 import SwiftUI
 
 public protocol ViewProtocol: View {
