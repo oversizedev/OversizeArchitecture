@@ -1,11 +1,8 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
+//
+// Copyright © 2025 Alexander Romanov
+// OversizeArchitecture.swift, created on 12.09.2025
+//
 
-/// A macro that produces both a value and a string containing the
-/// source code that generated the value. For example,
-///
-///     #stringify(x + y)
-///
-/// produces a tuple `(x + y, "x + y")`.
-@freestanding(expression)
-public macro stringify<T>(_ value: T) -> (T, String) = #externalMacro(module: "OversizeArchitectureMacros", type: "StringifyMacro")
+@attached(extension, conformances: Sendable, names: named(Action))
+@attached(member, names: named(handleAction))
+public macro ViewModel() = #externalMacro(module: "OversizeArchitectureMacros", type: "ViewModelMacro")
