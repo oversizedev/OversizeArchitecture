@@ -98,14 +98,14 @@ final class ViewModelMacroTests: XCTestCase {
 
                 public func handleAction(_ action: Action) async {
                     switch action {
-                    case .onNameChanged(name):
-                        await onNameChanged(name)
-                    case .onValueChanged(value):
+                    case let .onNameChanged(name):
+                        await onNameChanged(name: name)
+                    case let .onValueChanged(value):
                         await onValueChanged(value)
-                    case .onFocusField(field):
+                    case let .onFocusField(field):
                         await onFocusField(field)
-                    case .onUpdateData(id, name):
-                        await onUpdateData(id, name)
+                    case let .onUpdateData(id, name):
+                        await onUpdateData(id: id, name: name)
                     }
                 }
             }
@@ -355,10 +355,10 @@ final class ViewModelMacroTests: XCTestCase {
 
                 public func handleAction(_ action: Action) async {
                     switch action {
-                    case .onSet(value):
-                        await onSet(value)
-                    case .onUpdate(at, with):
-                        await onUpdate(at, with)
+                    case let .onSet(value):
+                        await onSet(value: value)
+                    case let .onUpdate(at, with):
+                        await onUpdate(at: at, with: with)
                     }
                 }
             }
@@ -416,14 +416,14 @@ final class ViewModelMacroTests: XCTestCase {
                         await onAppear()
                     case .onTapSave:
                         await onTapSave()
-                    case .onFocusField(field):
+                    case let .onFocusField(field):
                         await onFocusField(field)
-                    case .onNameChanged(name):
-                        await onNameChanged(name)
-                    case .onNoteChanged(note):
-                        await onNoteChanged(note)
-                    case .onUrlChanged(url):
-                        await onUrlChanged(url)
+                    case let .onNameChanged(name):
+                        await onNameChanged(name: name)
+                    case let .onNoteChanged(note):
+                        await onNoteChanged(note: note)
+                    case let .onUrlChanged(url):
+                        await onUrlChanged(url: url)
                     }
                 }
             }
@@ -475,9 +475,9 @@ final class ViewModelMacroTests: XCTestCase {
                     switch action {
                     case .onAppear:
                         await onAppear()
-                    case .onSave(name):
-                        await onSave(name)
-                    case .onDelete(id):
+                    case let .onSave(name):
+                        await onSave(name: name)
+                    case let .onDelete(id):
                         await onDelete(id)
                     }
                 }

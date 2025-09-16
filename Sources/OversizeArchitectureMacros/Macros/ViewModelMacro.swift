@@ -161,14 +161,14 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
                         callArgs.append(paramName)
                     } else {
                         caseParams.append(firstName)
-                        callArgs.append(firstName)
+                        callArgs.append("\(firstName): \(firstName)")
                     }
                 }
 
                 let casePattern = caseParams.joined(separator: ", ")
                 let callPattern = callArgs.joined(separator: ", ")
 
-                caseStatements.append("case .\(caseName)(\(casePattern)):")
+                caseStatements.append("case let .\(caseName)(\(casePattern)):")
                 caseStatements.append("    await \(methodName)(\(callPattern))")
             }
         }
