@@ -4,7 +4,6 @@ import SwiftSyntaxMacros
 @main
 struct OversizeMacroPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
-        ViewModelMacro.self,
-        ScreenMacro.self,
+        ViewModelMacro.self
     ]
 }
