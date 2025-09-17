@@ -18,5 +18,25 @@ public actor ProductDetailViewModel: ViewModelProtocol {
         self.output = output
     }
 
-    func onAppear() async { }
+    func onAppear() async {
+        guard let input = input else { return }
+
+        switch input.source {
+        case .id(let id):
+            await loadProduct(id: id)
+        case .product(let product):
+            await updateState(with: product)
+        }
+    }
+
+    private func loadProduct(id: UUID) async {
+        let product = Product(id: id, name: "Loaded Product")
+        await updateState(with: product)
+    }
+
+    private func updateState(with product: Product) async {
+        await state.update { viewState in
+            viewState.name = product.name
+        }
+    }
 }

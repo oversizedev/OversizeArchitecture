@@ -17,7 +17,7 @@ public struct ProductEditView: ViewProtocol {
 
     public var body: some View {
         VStack {
-            Text(viewState.title)
+            Text(viewState.mode.title)
 
             TextField("Name", text: $viewState.name)
 

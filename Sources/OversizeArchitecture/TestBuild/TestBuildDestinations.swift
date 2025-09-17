@@ -18,10 +18,10 @@ extension TestBuildDestinations {
         case .productList:
             ProductListModule.build()
         case .productDetail(let id):
-            ProductDetailModule.build(input: ProductDetailInput(id: id))
+            ProductDetailModule.build(input: .init(id: id))
         case .productEdit(let id, let onSave):
             ProductEditModule.build(
-                input: .init(id: id),
+                input: id.map { .init(id: $0) } ?? .init(),
                 output: .init(onSave: onSave)
             )
         }

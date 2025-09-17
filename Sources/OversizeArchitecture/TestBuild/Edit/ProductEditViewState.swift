@@ -13,17 +13,8 @@ public final class ProductEditViewState: ViewStateProtocol {
     public let mode: EditMode
     public let productId: UUID
 
-    public var title: String {
-        switch mode {
-        case .create:
-            "Create Product"
-        case .edit:
-            "Edit Product"
-        }
-    }
-
-    public init(input:ProductListModule.Input?) {
-        if let id = input?.id {
+    public init(input: ProductEditModule.Input?) {
+        if let id = input?.productId {
             self.mode = .edit
             self.productId = id
         } else {
@@ -34,5 +25,14 @@ public final class ProductEditViewState: ViewStateProtocol {
 
     public enum EditMode {
         case create, edit
+        
+        var title: String {
+            switch self {
+            case .create:
+                "Create Product"
+            case .edit:
+                "Edit Product"
+            }
+        }
     }
 }
