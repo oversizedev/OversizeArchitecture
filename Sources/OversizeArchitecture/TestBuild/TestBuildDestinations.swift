@@ -16,19 +16,13 @@ extension TestBuildDestinations {
     public var view: some View {
         switch self {
         case .productList:
-            Builder<ProductListModule>.build(
-                input: ProductListInput(),
-                output: ProductListOutput()
-            )
+            ProductListModule.build()
         case .productDetail(let id):
-            Builder<ProductDetailModule>.build(
-                input: ProductDetailInput(id: id),
-                output: ProductDetailOutput()
-            )
+            ProductDetailModule.build(input: ProductDetailInput(id: id))
         case .productEdit(let id, let onSave):
-            Builder<ProductEditModule>.build(
-                input: ProductEditInput(id: id),
-                output: ProductEditOutput(onSave: onSave)
+            ProductEditModule.build(
+                input: .init(id: id),
+                output: .init(onSave: onSave)
             )
         }
     }

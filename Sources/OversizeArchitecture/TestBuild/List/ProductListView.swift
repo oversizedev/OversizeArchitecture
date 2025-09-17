@@ -18,11 +18,10 @@ public struct ProductListView: ViewProtocol {
     public var body: some View {
         Text(viewState.title)
     }
-
 }
 
 #Preview("List") {
-    Builder<ProductListModule>.build(
+    ProductListModule.build(
         input: ProductListInput(),
         output: ProductListOutput()
     )

@@ -22,8 +22,5 @@ public struct ProductDetailView: ViewProtocol {
 }
 
 #Preview("Detail") {
-    Builder<ProductDetailModule>.build(
-        input: ProductDetailInput(id: UUID()),
-        output: ProductDetailOutput()
-    )
+    ProductDetailModule.build(input: ProductDetailInput(id: UUID()))
 }

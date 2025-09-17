@@ -25,12 +25,13 @@ public struct ProductEditView: ViewProtocol {
                 reducer.callAsFunction(.onTapSave)
             }
         }
+        .task { reducer.callAsFunction(.onAppear) }
     }
 
 }
 
 #Preview("Edit") {
-    Builder<ProductEditModule>.build(
+    ProductEditModule.build(
         input: ProductEditInput(),
         output: ProductEditOutput(onSave: { product in
             print("Saved: \(product.name)")

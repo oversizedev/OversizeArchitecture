@@ -15,7 +15,7 @@ protocol ModuleProtocol {
 
 extension ModuleProtocol where ViewScene: View {
     @MainActor
-    static func preview(input: Input? = nil, output: Output? = nil) -> some View {
+    static func build(input: Input? = nil, output: Output? = nil) -> some View {
         let state = ViewState(input: input)
         let viewModel = ViewModel(
             state: state,
@@ -24,21 +24,5 @@ extension ModuleProtocol where ViewScene: View {
         )
         let reducer = Reducer(viewModel: viewModel)
         return ViewScene(viewState: state, reducer: reducer)
-    }
-}
-
-final class Builder<M>: Sendable where M: ModuleProtocol, M.ViewScene: View { }
-
-extension Builder where M.ViewScene: View {
-    @MainActor
-    static func build(input: M.ViewModel.Input? = nil, output: M.ViewModel.Output? = nil) -> some View {
-        let state = M.ViewState(input: input)
-        let viewModel = M.ViewModel(
-            state: state,
-            input: input,
-            output: output
-        )
-        let reducer = Reducer(viewModel: viewModel)
-        return M.ViewScene(viewState: state, reducer: reducer)
     }
 }
