@@ -8,11 +8,11 @@ import SwiftUI
 @ViewModel
 public actor ProductDetailViewModel: ViewModelProtocol {
 
-    public var state: ProductDetailViewState
-    private let input: ProductDetailInput?
-    private let output: ProductDetailOutput?
+    public var state: ProductDetailModule.ViewState
+    private let input: ProductDetailModule.Input?
+    private let output: ProductDetailModule.Output?
     
-    public init(state: ProductDetailViewState, input: ProductDetailInput?, output: ProductDetailOutput?) {
+    public init(state: ProductDetailModule.ViewState, input: ProductDetailModule.Input?, output: ProductDetailModule.Output?) {
         self.state = state
         self.input = input
         self.output = output

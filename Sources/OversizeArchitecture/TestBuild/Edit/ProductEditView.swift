@@ -7,10 +7,10 @@ import SwiftUI
 
 public struct ProductEditView: ViewProtocol {
 
-    @Bindable var viewState: ProductEditViewState
-    let reducer: Reducer<ProductEditViewModel>
+    @Bindable var viewState: ProductEditModule.ViewState
+    let reducer: Reducer<ProductEditModule.ViewModel>
 
-    public init(viewState: ProductEditViewState, reducer: Reducer<ProductEditViewModel>) {
+    public init(viewState: ProductEditModule.ViewState, reducer: Reducer<ProductEditModule.ViewModel>) {
         self.viewState = viewState
         self.reducer = reducer
     }

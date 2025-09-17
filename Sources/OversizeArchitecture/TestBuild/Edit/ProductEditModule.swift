@@ -5,10 +5,10 @@
 
 import Foundation
 
-enum ProductEditModule: ModuleProtocol {
-    typealias Input = ProductEditInput
-    typealias Output = ProductEditOutput
-    typealias ViewState = ProductEditViewState
-    typealias ViewModel = ProductEditViewModel
-    typealias ViewScene = ProductEditView
+public enum ProductEditModule: ModuleProtocol {
+    public typealias Input = ProductEditInput
+    public typealias Output = ProductEditOutput
+    public typealias ViewState = ProductEditViewState
+    public typealias ViewModel = ProductEditViewModel
+    public typealias ViewScene = ProductEditView
 }

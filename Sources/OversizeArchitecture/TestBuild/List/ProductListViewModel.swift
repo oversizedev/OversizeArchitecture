@@ -8,12 +8,12 @@ import SwiftUI
 @ViewModel
 public actor ProductListViewModel: ViewModelProtocol {
 
-    public let state: ProductListViewState
-    private let input: ProductListInput?
-    private let output: ProductListOutput?
+    public let state: ProductListModule.ViewState
+    private let input: ProductListModule.Input?
+    private let output: ProductListModule.Output?
 
     @MainActor
-    public init(state: ProductListViewState, input: ProductListInput?, output: ProductListOutput?) {
+    public init(state: ProductListModule.ViewState, input: ProductListModule.Input?, output: ProductListModule.Output?) {
         self.state = state
         self.input = input
         self.output = output

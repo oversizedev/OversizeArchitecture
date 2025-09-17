@@ -22,7 +22,7 @@ public final class ProductEditViewState: ViewStateProtocol {
         }
     }
 
-    public init(input: ProductEditInput?) {
+    public init(input:ProductListModule.Input?) {
         if let id = input?.id {
             self.mode = .edit
             self.productId = id

@@ -7,10 +7,10 @@ import SwiftUI
 
 public struct ProductDetailView: ViewProtocol {
 
-    @Bindable var viewState: ProductDetailViewState
-    let reducer: Reducer<ProductDetailViewModel>
+    @Bindable var viewState: ProductDetailModule.ViewState
+    let reducer: Reducer<ProductDetailModule.ViewModel>
 
-    public init(viewState: ProductDetailViewState, reducer: Reducer<ProductDetailViewModel>) {
+    public init(viewState: ProductDetailModule.ViewState, reducer: Reducer<ProductDetailModule.ViewModel>) {
         self.viewState = viewState
         self.reducer = reducer
     }
@@ -22,5 +22,5 @@ public struct ProductDetailView: ViewProtocol {
 }
 
 #Preview("Detail") {
-    ProductDetailModule.build(input: ProductDetailInput(id: UUID()))
+    ProductDetailModule.build(input: .init(id: UUID()))
 }
