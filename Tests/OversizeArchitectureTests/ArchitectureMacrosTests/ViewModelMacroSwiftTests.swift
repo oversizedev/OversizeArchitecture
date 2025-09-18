@@ -588,4 +588,5 @@ struct ViewModelMacroSwiftTests {
             macros: testMacros
         )
     }
+
 }

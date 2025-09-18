@@ -6,16 +6,8 @@
 import SwiftUI
 @testable import OversizeArchitecture
 
+@View(module: ProductEditModule.self)
 public struct ProductEditView: ViewProtocol {
-
-    @Bindable var viewState: ProductEditModule.ViewState
-    let reducer: Reducer<ProductEditModule.ViewModel>
-
-    public init(viewState: ProductEditModule.ViewState, reducer: Reducer<ProductEditModule.ViewModel>) {
-        self.viewState = viewState
-        self.reducer = reducer
-    }
-
     public var body: some View {
         VStack {
             Text(viewState.mode.title)
@@ -28,7 +20,6 @@ public struct ProductEditView: ViewProtocol {
         }
         .task { reducer.callAsFunction(.onAppear) }
     }
-
 }
 
 #Preview("Edit") {
