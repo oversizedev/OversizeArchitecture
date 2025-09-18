@@ -9,3 +9,6 @@ public macro ViewModel(module: Any.Type? = nil) = #externalMacro(module: "Oversi
 
 @attached(member, names: named(viewState), named(reducer), named(init))
 public macro View(module: Any.Type) = #externalMacro(module: "OversizeArchitectureMacros", type: "ViewMacro")
+
+@attached(member, names: named(Input), named(Output), named(ViewState), named(ViewModel), named(ViewScene))
+public macro Module(prefix: String? = nil) = #externalMacro(module: "OversizeArchitectureMacros", type: "ModuleMacro")
