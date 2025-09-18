@@ -4,6 +4,7 @@
 //
 
 import Foundation
+@testable import OversizeArchitecture
 
 public enum ProductEditModule: ModuleProtocol {
     public typealias Input = ProductEditInput

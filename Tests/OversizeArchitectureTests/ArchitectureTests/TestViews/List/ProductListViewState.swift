@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+@testable import OversizeArchitecture
 
 @Observable
 public final class ProductListViewState: ViewStateProtocol {

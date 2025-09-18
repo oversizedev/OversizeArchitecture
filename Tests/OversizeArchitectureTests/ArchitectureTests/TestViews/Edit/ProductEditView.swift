@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+@testable import OversizeArchitecture
 
 public struct ProductEditView: ViewProtocol {
 

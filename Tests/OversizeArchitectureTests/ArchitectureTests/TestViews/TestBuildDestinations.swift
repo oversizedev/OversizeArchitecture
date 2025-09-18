@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+@testable import OversizeArchitecture
 
 public enum TestBuildDestinations {
     case productList

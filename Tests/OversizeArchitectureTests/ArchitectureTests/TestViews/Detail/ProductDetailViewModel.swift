@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+@testable import OversizeArchitecture
 
 @ViewModel
 public actor ProductDetailViewModel: ViewModelProtocol {
