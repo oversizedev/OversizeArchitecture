@@ -142,7 +142,6 @@ struct ViewStateSwiftTests {
 
     @Test("ViewState protocol conformance")
     func viewStateProtocolConformance() {
-        // Test that view states conform to ViewStateProtocol
         func testViewStateProtocol<T: ViewStateProtocol>(_: T.Type) {}
 
         testViewStateProtocol(ProductDetailViewState.self)

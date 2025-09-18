@@ -12,7 +12,6 @@ struct ModuleSwiftTests {
 
     @Test("Module protocol conformance")
     func moduleProtocolConformance() {
-        // Test that modules conform to ModuleProtocol
         func testModuleProtocol<T: ModuleProtocol>(_: T.Type) {}
 
         testModuleProtocol(ProductDetailModule.self)
@@ -22,7 +21,6 @@ struct ModuleSwiftTests {
 
     @Test("ProductDetailModule typealiases")
     func productDetailModuleTypealiases() {
-        // Test that typealiases are correctly defined
         func testTypealias<T, U>(_: T.Type, _: U.Type) -> Bool {
             return T.self == U.self
         }
@@ -35,7 +33,6 @@ struct ModuleSwiftTests {
 
     @Test("ProductEditModule typealiases")
     func productEditModuleTypealiases() {
-        // Test that typealiases are correctly defined
         func testTypealias<T, U>(_: T.Type, _: U.Type) -> Bool {
             return T.self == U.self
         }
@@ -48,7 +45,6 @@ struct ModuleSwiftTests {
 
     @Test("ProductListModule typealiases")
     func productListModuleTypealiases() {
-        // Test that typealiases are correctly defined
         func testTypealias<T, U>(_: T.Type, _: U.Type) -> Bool {
             return T.self == U.self
         }

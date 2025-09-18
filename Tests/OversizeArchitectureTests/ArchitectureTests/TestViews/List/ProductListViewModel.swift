@@ -13,7 +13,6 @@ public actor ProductListViewModel: ViewModelProtocol {
     private let input: ProductListModule.Input?
     private let output: ProductListModule.Output?
 
-    @MainActor
     public init(state: ProductListModule.ViewState, input: ProductListModule.Input?, output: ProductListModule.Output?) {
         self.state = state
         self.input = input

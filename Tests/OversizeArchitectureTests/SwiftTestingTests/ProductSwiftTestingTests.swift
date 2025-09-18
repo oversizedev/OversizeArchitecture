@@ -145,11 +145,9 @@ struct TaggedProductTests {
 
         #expect(products.count == 5)
 
-        // Check all products have different IDs
         let uniqueIds = Set(products.map { $0.id })
         #expect(uniqueIds.count == 5)
 
-        // Check names are correct
         for (index, product) in products.enumerated() {
             #expect(product.name == "Product \(index + 1)")
         }
