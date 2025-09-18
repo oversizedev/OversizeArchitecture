@@ -6,18 +6,8 @@
 import SwiftUI
 @testable import OversizeArchitecture
 
-@ViewModel
+@ViewModel(module: ProductDetailModule.self)
 public actor ProductDetailViewModel: ViewModelProtocol {
-
-    public var state: ProductDetailModule.ViewState
-    private let input: ProductDetailModule.Input?
-    private let output: ProductDetailModule.Output?
-    
-    public init(state: ProductDetailModule.ViewState, input: ProductDetailModule.Input?, output: ProductDetailModule.Output?) {
-        self.state = state
-        self.input = input
-        self.output = output
-    }
 
     func onAppear() async {
         guard let input = input else { return }

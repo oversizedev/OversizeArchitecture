@@ -29,8 +29,8 @@ struct ProductListViewModelSwiftTests {
 
         let (viewModel, _) = await createViewModel(input: input)
 
-        let state = viewModel.state
         await MainActor.run {
+            let state = viewModel.state
             #expect(state.filterType == .all)
             #expect(state.title == "All Products")
         }
@@ -42,8 +42,8 @@ struct ProductListViewModelSwiftTests {
 
         let (viewModel, _) = await createViewModel(input: input)
 
-        let state = viewModel.state
         await MainActor.run {
+            let state = viewModel.state
             #expect(state.filterType == .favorites)
             #expect(state.title == "Favorites")
         }
@@ -53,8 +53,8 @@ struct ProductListViewModelSwiftTests {
     func initializationWithNilInputDefaultsToAll() async {
         let (viewModel, _) = await createViewModel(input: nil)
 
-        let state = viewModel.state
         await MainActor.run {
+            let state = viewModel.state
             #expect(state.filterType == .all)
             #expect(state.title == "All Products")
         }
@@ -65,8 +65,8 @@ struct ProductListViewModelSwiftTests {
         let input = ProductListInput(filterType: filterType)
         let (viewModel, _) = await createViewModel(input: input)
 
-        let state = viewModel.state
         await MainActor.run {
+            let state = viewModel.state
             #expect(state.filterType == filterType)
 
             let expectedTitle = filterType == .all ? "All Products" : "Favorites"
@@ -81,8 +81,8 @@ struct ProductListViewModelSwiftTests {
 
         await viewModel.onAppear()
 
-        let state = viewModel.state
         await MainActor.run {
+            let state = viewModel.state
             #expect(state.filterType == .all)
             #expect(state.title == "All Products")
         }
@@ -97,8 +97,8 @@ struct ProductListViewModelSwiftTests {
 
         await viewModel.onAppear()
 
-        let state = viewModel.state
         await MainActor.run {
+            let state = viewModel.state
             #expect(state.filterType == .all)
             #expect(state.title == "All Products")
         }
@@ -111,8 +111,8 @@ struct ProductListViewModelSwiftTests {
 
         await viewModel.onAppear()
 
-        let state = viewModel.state
         await MainActor.run {
+            let state = viewModel.state
             #expect(state.filterType == .favorites)
             #expect(state.title == "Favorites")
         }
@@ -127,8 +127,8 @@ struct ProductListViewModelSwiftTests {
         await viewModel.onAppear()
         await viewModel.onAppear()
 
-        let state = viewModel.state
         await MainActor.run {
+            let state = viewModel.state
             #expect(state.filterType == .all)
             #expect(state.title == "All Products")
         }

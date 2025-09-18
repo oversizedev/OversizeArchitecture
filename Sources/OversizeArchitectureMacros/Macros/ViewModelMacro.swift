@@ -60,10 +60,22 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
             throw ViewModelMacroError.onlyApplicableToClassOrActor
         }
 
+        let moduleType = extractModuleType(from: node)
         let onMethods = extractOnMethods(from: declGroup)
         let handleActionMethod = generateHandleActionMethod(from: onMethods)
 
-        return [DeclSyntax(handleActionMethod)]
+        var members: [DeclSyntax] = []
+
+        if let module = moduleType {
+            let properties = generateModuleProperties(module: module)
+            let initializer = generateInitializer(module: module)
+            members.append(contentsOf: properties)
+            members.append(DeclSyntax(initializer))
+        }
+
+        members.append(DeclSyntax(handleActionMethod))
+
+        return members
     }
 
     private static func extractOnMethods(from declaration: some DeclGroupSyntax) -> [FunctionDeclSyntax] {
@@ -202,5 +214,66 @@ extension String {
     func lowercasingFirst() -> String {
         guard !isEmpty else { return self }
         return prefix(1).lowercased() + dropFirst()
+    }
+}
+
+private extension ViewModelMacro {
+    static func extractModuleType(from node: AttributeSyntax) -> String? {
+        guard let arguments = node.arguments?.as(LabeledExprListSyntax.self) else {
+            return nil
+        }
+
+        for argument in arguments {
+            if argument.label?.text == "module" {
+                if let memberAccessExpr = argument.expression.as(MemberAccessExprSyntax.self),
+                   let baseType = memberAccessExpr.base?.as(DeclReferenceExprSyntax.self) {
+                    return baseType.baseName.text
+                }
+                if let declRef = argument.expression.as(DeclReferenceExprSyntax.self) {
+                    return declRef.baseName.text
+                }
+            }
+        }
+        return nil
+    }
+
+    static func generateModuleProperties(module: String) -> [DeclSyntax] {
+        return [
+            DeclSyntax(
+                try! VariableDeclSyntax(
+                    """
+                    @MainActor
+                    public var state: \(raw: module).ViewState
+                    """
+                )
+            ),
+            DeclSyntax(
+                try! VariableDeclSyntax(
+                    """
+                    private let input: \(raw: module).Input?
+                    """
+                )
+            ),
+            DeclSyntax(
+                try! VariableDeclSyntax(
+                    """
+                    private let output: \(raw: module).Output?
+                    """
+                )
+            )
+        ]
+    }
+
+    static func generateInitializer(module: String) -> InitializerDeclSyntax {
+        return try! InitializerDeclSyntax(
+            """
+            @MainActor
+            public init(state: \(raw: module).ViewState, input: \(raw: module).Input?, output: \(raw: module).Output?) {
+                self.state = state
+                self.input = input
+                self.output = output
+            }
+            """
+        )
     }
 }

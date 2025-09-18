@@ -4,5 +4,5 @@
 //
 
 @attached(extension, names: named(Action))
-@attached(member, names: named(handleAction))
-public macro ViewModel() = #externalMacro(module: "OversizeArchitectureMacros", type: "ViewModelMacro")
+@attached(member, names: named(handleAction), named(state), named(input), named(output), named(init))
+public macro ViewModel(module: Any.Type? = nil) = #externalMacro(module: "OversizeArchitectureMacros", type: "ViewModelMacro")

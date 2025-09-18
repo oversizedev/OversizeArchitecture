@@ -540,4 +540,52 @@ struct ViewModelMacroSwiftTests {
             macros: testMacros
         )
     }
+
+    @Test("ViewModel with module generates properties and initializer")
+    func viewModelWithModuleGeneratesPropertiesAndInitializer() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro(module: ProductEditModule.self)
+            public actor ProductEditViewModel: ViewModelProtocol {
+                func onAppear() async {}
+                func onTapSave() async {}
+            }
+            """,
+            expandedSource: """
+            public actor ProductEditViewModel: ViewModelProtocol {
+                @MainActor
+                public var state: ProductEditModule.ViewState
+                private let input: ProductEditModule.Input?
+                private let output: ProductEditModule.Output?
+
+                @MainActor
+                public init(state: ProductEditModule.ViewState, input: ProductEditModule.Input?, output: ProductEditModule.Output?) {
+                    self.state = state
+                    self.input = input
+                    self.output = output
+                }
+
+                func onAppear() async {}
+                func onTapSave() async {}
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case .onAppear:
+                        await onAppear()
+                    case .onTapSave:
+                        await onTapSave()
+                    }
+                }
+            }
+
+            extension ProductEditViewModel {
+                public enum Action: Sendable {
+                    case onAppear
+                    case onTapSave
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
 }
