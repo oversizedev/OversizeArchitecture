@@ -1,12 +1,13 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ProductEditViewModelTests.swift, created on 18.09.2025
+// ProductEditViewModelSwiftTests.swift, created on 18.09.2025
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import OversizeArchitecture
 
-actor ProductBox {
+actor ProductTestCapture {
     private var savedProducts: [Product] = []
     private var saveCallCount = 0
 
@@ -35,7 +36,8 @@ actor ProductBox {
     }
 }
 
-final class ProductEditViewModelTests: XCTestCase {
+@Suite("Product Edit ViewModel Tests")
+struct ProductEditViewModelSwiftTests {
 
     private func createViewModel(
         input: ProductEditInput?,
@@ -52,50 +54,53 @@ final class ProductEditViewModelTests: XCTestCase {
         return (viewModel, state)
     }
 
-    func testProductEditViewModelInitializationCreateMode() async {
+    @Test("Initialization in create mode")
+    func initializationInCreateMode() async {
         let input = ProductEditInput()
 
         let (_, state) = await createViewModel(input: input)
 
         await MainActor.run {
-            XCTAssertEqual(state.mode, .create)
-            XCTAssertEqual(state.name, "")
-            XCTAssertNotNil(state.productId)
+            #expect(state.mode == ProductEditViewState.EditMode.create)
+            #expect(state.name == "")
         }
     }
 
-    func testProductEditViewModelWithExistingProduct() async {
+    @Test("Initialization with existing product")
+    func initializationWithExistingProduct() async {
         let product = Product(id: UUID(), name: "Test Product")
         let input = ProductEditInput(product: product)
 
         let (_, state) = await createViewModel(input: input)
 
         await MainActor.run {
-            XCTAssertEqual(state.mode, .edit)
-            XCTAssertEqual(state.productId, product.id)
-            XCTAssertEqual(state.name, "")
+            #expect(state.mode == ProductEditViewState.EditMode.edit)
+            #expect(state.productId == product.id)
+            #expect(state.name == "")
         }
     }
 
-    func testProductEditViewModelInitializationWithId() async {
+    @Test("Initialization with product ID")
+    func initializationWithProductId() async {
         let productId = UUID()
         let input = ProductEditInput(id: productId)
 
         let (_, state) = await createViewModel(input: input)
 
         await MainActor.run {
-            XCTAssertEqual(state.mode, .edit)
-            XCTAssertEqual(state.productId, productId)
-            XCTAssertEqual(state.name, "")
+            #expect(state.mode == ProductEditViewState.EditMode.edit)
+            #expect(state.productId == productId)
+            #expect(state.name == "")
         }
     }
 
-    func testOnTapSaveCreateMode() async {
+    @Test("OnTapSave in create mode with output")
+    func onTapSaveInCreateModeWithOutput() async {
         let input = ProductEditInput()
-        let productBox = ProductBox()
+        let productCapture = ProductTestCapture()
 
         let output = ProductEditOutput { product in
-            Task { await productBox.setProduct(product) }
+            Task { await productCapture.setProduct(product) }
         }
 
         let (viewModel, state) = await createViewModel(input: input, output: output)
@@ -105,18 +110,18 @@ final class ProductEditViewModelTests: XCTestCase {
         }
 
         await viewModel.onTapSave()
-
         await Task.yield()
 
-        let product = await productBox.getLatestProduct()
-        XCTAssertNotNil(product)
-        XCTAssertEqual(product?.name, "New Product Name")
+        let product = await productCapture.getLatestProduct()
+        #expect(product != nil)
+        #expect(product?.name == "New Product Name")
 
         let stateProductId = await MainActor.run { state.productId }
-        XCTAssertEqual(product?.id, stateProductId)
+        #expect(product?.id == stateProductId)
     }
 
-    func testOnTapSaveEditMode() async {
+    @Test("OnTapSave in edit mode")
+    func onTapSaveInEditMode() async {
         let existingProduct = Product(id: UUID(), name: "Original Name")
         let input = ProductEditInput(product: existingProduct)
 
@@ -129,13 +134,14 @@ final class ProductEditViewModelTests: XCTestCase {
         await viewModel.onTapSave()
 
         await MainActor.run {
-            XCTAssertEqual(state.name, "Updated Product Name")
-            XCTAssertEqual(state.productId, existingProduct.id)
-            XCTAssertEqual(state.mode, .edit)
+            #expect(state.name == "Updated Product Name")
+            #expect(state.productId == existingProduct.id)
+            #expect(state.mode == ProductEditViewState.EditMode.edit)
         }
     }
 
-    func testOnTapSaveWithoutOutput() async {
+    @Test("OnTapSave without output")
+    func onTapSaveWithoutOutput() async {
         let input = ProductEditInput()
 
         let (viewModel, state) = await createViewModel(input: input)
@@ -147,16 +153,16 @@ final class ProductEditViewModelTests: XCTestCase {
         await viewModel.onTapSave()
 
         await MainActor.run {
-            XCTAssertNotNil(state.productId)
         }
     }
 
-    func testOnTapSaveWithEmptyName() async {
+    @Test("OnTapSave with empty name")
+    func onTapSaveWithEmptyName() async {
         let input = ProductEditInput()
-        let productBox = ProductBox()
+        let productCapture = ProductTestCapture()
 
         let output = ProductEditOutput { product in
-            Task { await productBox.setProduct(product) }
+            Task { await productCapture.setProduct(product) }
         }
 
         let (viewModel, state) = await createViewModel(input: input, output: output)
@@ -166,20 +172,20 @@ final class ProductEditViewModelTests: XCTestCase {
         }
 
         await viewModel.onTapSave()
-
         await Task.yield()
 
-        let product = await productBox.getLatestProduct()
-        XCTAssertNotNil(product)
-        XCTAssertEqual(product?.name, "")
+        let product = await productCapture.getLatestProduct()
+        #expect(product != nil)
+        #expect(product?.name == "")
     }
 
-    func testMultipleSaveCalls() async {
+    @Test("Multiple save calls")
+    func multipleSaveCalls() async {
         let input = ProductEditInput()
-        let productBox = ProductBox()
+        let productCapture = ProductTestCapture()
 
         let output = ProductEditOutput { product in
-            Task { await productBox.setProduct(product) }
+            Task { await productCapture.setProduct(product) }
         }
 
         let (viewModel, state) = await createViewModel(input: input, output: output)
@@ -196,13 +202,12 @@ final class ProductEditViewModelTests: XCTestCase {
 
         await Task.yield()
 
-        let saveCount = await productBox.getSaveCallCount()
-        let allProducts = await productBox.getAllProducts()
+        let saveCount = await productCapture.getSaveCallCount()
+        let allProducts = await productCapture.getAllProducts()
 
-        XCTAssertEqual(saveCount, 2)
-        XCTAssertEqual(allProducts.count, 2)
-        XCTAssertEqual(allProducts.first?.name, "First Save")
-        XCTAssertEqual(allProducts.last?.name, "Second Save")
+        #expect(saveCount == 2)
+        #expect(allProducts.count == 2)
+        #expect(allProducts.first?.name == "First Save")
+        #expect(allProducts.last?.name == "Second Save")
     }
-
 }

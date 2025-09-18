@@ -1,13 +1,14 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ProductListViewModelTests.swift, created on 18.09.2025
+// ProductListViewModelSwiftTests.swift, created on 18.09.2025
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import OversizeArchitecture
 
-
-final class ProductListViewModelTests: XCTestCase {
+@Suite("Product List ViewModel Tests")
+struct ProductListViewModelSwiftTests {
 
     private func createViewModel(
         input: ProductListInput?,
@@ -22,56 +23,59 @@ final class ProductListViewModelTests: XCTestCase {
         return (viewModel, state)
     }
 
-    func testProductListViewModelInitializationWithAllFilter() async {
+    @Test("Initialization with all filter")
+    func initializationWithAllFilter() async {
         let input = ProductListInput(filterType: .all)
 
         let (viewModel, _) = await createViewModel(input: input)
 
         let state = viewModel.state
         await MainActor.run {
-            XCTAssertEqual(state.filterType, .all)
-            XCTAssertEqual(state.title, "All Products")
+            #expect(state.filterType == .all)
+            #expect(state.title == "All Products")
         }
     }
 
-    func testProductListViewModelWithFavoritesFilter() async {
+    @Test("Initialization with favorites filter")
+    func initializationWithFavoritesFilter() async {
         let input = ProductListInput(filterType: .favorites)
 
         let (viewModel, _) = await createViewModel(input: input)
 
         let state = viewModel.state
         await MainActor.run {
-            XCTAssertEqual(state.filterType, .favorites)
-            XCTAssertEqual(state.title, "Favorites")
+            #expect(state.filterType == .favorites)
+            #expect(state.title == "Favorites")
         }
     }
 
-    func testProductListViewModelWithNilInput() async {
+    @Test("Initialization with nil input defaults to all")
+    func initializationWithNilInputDefaultsToAll() async {
         let (viewModel, _) = await createViewModel(input: nil)
 
         let state = viewModel.state
         await MainActor.run {
-            XCTAssertEqual(state.filterType, .all)
-            XCTAssertEqual(state.title, "All Products")
+            #expect(state.filterType == .all)
+            #expect(state.title == "All Products")
         }
     }
 
-    func testAllFilterTypeCases() async {
-        for filterType in ProductListInput.FilterType.allCases {
-            let input = ProductListInput(filterType: filterType)
-            let (viewModel, _) = await createViewModel(input: input)
+    @Test("All filter type cases work correctly", arguments: ProductListInput.FilterType.allCases)
+    func allFilterTypeCasesWorkCorrectly(filterType: ProductListInput.FilterType) async {
+        let input = ProductListInput(filterType: filterType)
+        let (viewModel, _) = await createViewModel(input: input)
 
-            let state = viewModel.state
-            await MainActor.run {
-                XCTAssertEqual(state.filterType, filterType)
+        let state = viewModel.state
+        await MainActor.run {
+            #expect(state.filterType == filterType)
 
-                let expectedTitle = filterType == .all ? "All Products" : "Favorites"
-                XCTAssertEqual(state.title, expectedTitle)
-            }
+            let expectedTitle = filterType == .all ? "All Products" : "Favorites"
+            #expect(state.title == expectedTitle)
         }
     }
 
-    func testOnAppearMethod() async {
+    @Test("OnAppear method maintains state")
+    func onAppearMethodMaintainsState() async {
         let input = ProductListInput(filterType: .all)
         let (viewModel, _) = await createViewModel(input: input)
 
@@ -79,12 +83,13 @@ final class ProductListViewModelTests: XCTestCase {
 
         let state = viewModel.state
         await MainActor.run {
-            XCTAssertEqual(state.filterType, .all)
-            XCTAssertEqual(state.title, "All Products")
+            #expect(state.filterType == .all)
+            #expect(state.title == "All Products")
         }
     }
 
-    func testWithOutput() async {
+    @Test("ViewModel works with output")
+    func viewModelWorksWithOutput() async {
         let input = ProductListInput(filterType: .all)
         let output = ProductListOutput()
 
@@ -94,12 +99,13 @@ final class ProductListViewModelTests: XCTestCase {
 
         let state = viewModel.state
         await MainActor.run {
-            XCTAssertEqual(state.filterType, .all)
-            XCTAssertEqual(state.title, "All Products")
+            #expect(state.filterType == .all)
+            #expect(state.title == "All Products")
         }
     }
 
-    func testWithNilOutput() async {
+    @Test("ViewModel works without output")
+    func viewModelWorksWithoutOutput() async {
         let input = ProductListInput(filterType: .favorites)
         let (viewModel, _) = await createViewModel(input: input)
 
@@ -107,12 +113,13 @@ final class ProductListViewModelTests: XCTestCase {
 
         let state = viewModel.state
         await MainActor.run {
-            XCTAssertEqual(state.filterType, .favorites)
-            XCTAssertEqual(state.title, "Favorites")
+            #expect(state.filterType == .favorites)
+            #expect(state.title == "Favorites")
         }
     }
 
-    func testMultipleOnAppearCalls() async {
+    @Test("Multiple onAppear calls work correctly")
+    func multipleOnAppearCallsWorkCorrectly() async {
         let input = ProductListInput(filterType: .all)
         let (viewModel, _) = await createViewModel(input: input, output: ProductListOutput())
 
@@ -122,9 +129,8 @@ final class ProductListViewModelTests: XCTestCase {
 
         let state = viewModel.state
         await MainActor.run {
-            XCTAssertEqual(state.filterType, .all)
-            XCTAssertEqual(state.title, "All Products")
+            #expect(state.filterType == .all)
+            #expect(state.title == "All Products")
         }
     }
-
 }

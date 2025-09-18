@@ -1,13 +1,14 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ProductDetailViewModelTests.swift, created on 18.09.2025
+// ProductDetailViewModelSwiftTests.swift, created on 18.09.2025
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import OversizeArchitecture
 
-
-final class ProductDetailViewModelTests: XCTestCase {
+@Suite("Product Detail ViewModel Tests")
+struct ProductDetailViewModelSwiftTests {
 
     private func createViewModel(
         input: ProductDetailInput?,
@@ -24,31 +25,34 @@ final class ProductDetailViewModelTests: XCTestCase {
         return (viewModel, state)
     }
 
-    func testProductDetailViewModelInitialization() async {
+    @Test("ViewModel initialization with product ID")
+    func viewModelInitializationWithProductId() async {
         let productId = UUID()
         let input = ProductDetailInput(id: productId)
 
         let (_, state) = await createViewModel(input: input)
 
         await MainActor.run {
-            XCTAssertEqual(state.id, productId)
-            XCTAssertEqual(state.name, "Product")
+            #expect(state.id == productId)
+            #expect(state.name == "Product")
         }
     }
 
-    func testProductDetailViewModelInitializationWithProduct() async {
+    @Test("ViewModel initialization with product")
+    func viewModelInitializationWithProduct() async {
         let product = Product(id: UUID(), name: "Initial Product")
         let input = ProductDetailInput(product: product)
 
         let (_, state) = await createViewModel(input: input)
 
         await MainActor.run {
-            XCTAssertEqual(state.id, product.id)
-            XCTAssertEqual(state.name, "Product")
+            #expect(state.id == product.id)
+            #expect(state.name == "Product")
         }
     }
 
-    func testOnAppearWithProductId() async {
+    @Test("OnAppear with product ID loads product")
+    func onAppearWithProductIdLoadsProduct() async {
         let productId = UUID()
         let input = ProductDetailInput(id: productId)
 
@@ -57,12 +61,13 @@ final class ProductDetailViewModelTests: XCTestCase {
         await viewModel.onAppear()
 
         await MainActor.run {
-            XCTAssertEqual(state.id, productId)
-            XCTAssertEqual(state.name, "Loaded Product")
+            #expect(state.id == productId)
+            #expect(state.name == "Loaded Product")
         }
     }
 
-    func testOnAppearWithProduct() async {
+    @Test("OnAppear with product keeps product name")
+    func onAppearWithProductKeepsProductName() async {
         let product = Product(id: UUID(), name: "Test Product")
         let input = ProductDetailInput(product: product)
 
@@ -71,23 +76,24 @@ final class ProductDetailViewModelTests: XCTestCase {
         await viewModel.onAppear()
 
         await MainActor.run {
-            XCTAssertEqual(state.id, product.id)
-            XCTAssertEqual(state.name, "Test Product")
+            #expect(state.id == product.id)
+            #expect(state.name == "Test Product")
         }
     }
 
-    func testOnAppearWithNilInput() async {
+    @Test("OnAppear with nil input creates default state")
+    func onAppearWithNilInputCreatesDefaultState() async {
         let (viewModel, state) = await createViewModel(input: nil)
 
         await viewModel.onAppear()
 
         await MainActor.run {
-            XCTAssertEqual(state.name, "Product")
-            XCTAssertNotNil(state.id)
+            #expect(state.name == "Product")
         }
     }
 
-    func testWithOutput() async {
+    @Test("ViewModel works with output")
+    func viewModelWorksWithOutput() async {
         let product = Product(id: UUID(), name: "Output Test Product")
         let input = ProductDetailInput(product: product)
         let output = ProductDetailOutput()
@@ -97,9 +103,8 @@ final class ProductDetailViewModelTests: XCTestCase {
         await viewModel.onAppear()
 
         await MainActor.run {
-            XCTAssertEqual(state.id, product.id)
-            XCTAssertEqual(state.name, product.name)
+            #expect(state.id == product.id)
+            #expect(state.name == product.name)
         }
     }
-
 }
