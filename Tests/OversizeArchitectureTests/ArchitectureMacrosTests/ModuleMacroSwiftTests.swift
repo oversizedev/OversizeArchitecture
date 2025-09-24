@@ -4,11 +4,11 @@
 //
 
 import Foundation
-import Testing
 import OversizeArchitecture
 import OversizeArchitectureMacros
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
+import Testing
 
 @Suite("Module Macro Tests")
 struct ModuleMacroSwiftTests {

@@ -4,12 +4,11 @@
 //
 
 import Foundation
-import Testing
 @testable import OversizeArchitecture
+import Testing
 
 @Suite("Product Swift Testing Demo")
 struct ProductSwiftTestingTests {
-
     @Test("Product initialization")
     func productInitialization() {
         let id = UUID()
@@ -119,6 +118,7 @@ struct ProductSwiftTestingTests {
 }
 
 // MARK: - Tags for test organization
+
 extension Tag {
     @Tag static var product: Self
     @Tag static var viewModel: Self
@@ -127,7 +127,6 @@ extension Tag {
 
 @Suite("Tagged Tests Demo", .tags(.product, .async))
 struct TaggedProductTests {
-
     @Test("Async product creation", .tags(.product))
     func asyncProductCreation() async {
         let product = await Task {
@@ -139,7 +138,7 @@ struct TaggedProductTests {
 
     @Test("Multiple products comparison", .tags(.product))
     func multipleProductsComparison() {
-        let products = (1...5).map { index in
+        let products = (1 ... 5).map { index in
             Product(id: UUID(), name: "Product \(index)")
         }
 

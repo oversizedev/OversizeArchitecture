@@ -3,19 +3,18 @@
 // ProductListViewState.swift, created on 17.09.2025
 //
 
-import SwiftUI
 @testable import OversizeArchitecture
+import SwiftUI
 
 @Observable
 public final class ProductListViewState: ViewStateProtocol {
-
     public let filterType: ProductListInput.FilterType
 
     public var title: String {
         filterType.title
     }
 
-    public init(input: ProductListInput?) {
-        self.filterType = input?.filterType ?? .all
+    public init(input: ProductListModule.Input?) {
+        filterType = input?.filterType ?? .all
     }
 }

@@ -3,8 +3,8 @@
 // ProductListView.swift, created on 17.09.2025
 //
 
-import SwiftUI
 @testable import OversizeArchitecture
+import SwiftUI
 
 @View(module: ProductListModule.self)
 public struct ProductListView: ViewProtocol {

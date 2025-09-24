@@ -226,7 +226,8 @@ private extension ViewModelMacro {
         for argument in arguments {
             if argument.label?.text == "module" {
                 if let memberAccessExpr = argument.expression.as(MemberAccessExprSyntax.self),
-                   let baseType = memberAccessExpr.base?.as(DeclReferenceExprSyntax.self) {
+                   let baseType = memberAccessExpr.base?.as(DeclReferenceExprSyntax.self)
+                {
                     return baseType.baseName.text
                 }
                 if let declRef = argument.expression.as(DeclReferenceExprSyntax.self) {
@@ -238,7 +239,7 @@ private extension ViewModelMacro {
     }
 
     static func generateModuleProperties(module: String) -> [DeclSyntax] {
-        return [
+        [
             DeclSyntax(
                 try! VariableDeclSyntax(
                     """
@@ -265,7 +266,7 @@ private extension ViewModelMacro {
     }
 
     static func generateInitializer(module: String) -> InitializerDeclSyntax {
-        return try! InitializerDeclSyntax(
+        try! InitializerDeclSyntax(
             """
             @MainActor
             public init(state: \(raw: module).ViewState, input: \(raw: module).Input?, output: \(raw: module).Output?) {

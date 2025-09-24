@@ -4,12 +4,11 @@
 //
 
 import Foundation
-import Testing
 @testable import OversizeArchitecture
+import Testing
 
 @Suite("View State Tests")
 struct ViewStateSwiftTests {
-
     // MARK: - Product Detail View State Tests
 
     @Test("ProductDetailViewState with input")
@@ -142,7 +141,7 @@ struct ViewStateSwiftTests {
 
     @Test("ViewState protocol conformance")
     func viewStateProtocolConformance() {
-        func testViewStateProtocol<T: ViewStateProtocol>(_: T.Type) {}
+        func testViewStateProtocol(_: (some ViewStateProtocol).Type) {}
 
         testViewStateProtocol(ProductDetailViewState.self)
         testViewStateProtocol(ProductEditViewState.self)

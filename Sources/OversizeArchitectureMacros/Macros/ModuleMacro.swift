@@ -66,7 +66,7 @@ private extension ModuleMacro {
     }
 
     static func generateModuleTypealiases(prefix: String) -> [DeclSyntax] {
-        return [
+        [
             DeclSyntax(
                 try! TypeAliasDeclSyntax(
                     """

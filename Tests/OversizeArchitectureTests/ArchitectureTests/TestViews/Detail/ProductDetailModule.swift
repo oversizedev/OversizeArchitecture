@@ -10,19 +10,19 @@ public struct ProductDetailInput: Sendable {
     }
 
     public init(id: UUID) {
-        self.source = .id(id)
+        source = .id(id)
     }
 
     public init(product: Product) {
-        self.source = .product(product)
+        source = .product(product)
     }
 
     public var productId: UUID {
         switch source {
-        case .id(let id):
-            return id
-        case .product(let product):
-            return product.id
+        case let .id(id):
+            id
+        case let .product(product):
+            product.id
         }
     }
 }
@@ -32,4 +32,4 @@ public struct ProductDetailOutput: Sendable {
 }
 
 @Module
-public enum ProductDetailModule: ModuleProtocol { }
+public enum ProductDetailModule: ModuleProtocol {}

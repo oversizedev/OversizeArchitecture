@@ -4,8 +4,8 @@
 //
 
 import Foundation
-import Testing
 @testable import OversizeArchitecture
+import Testing
 
 actor ProductTestCapture {
     private var savedProducts: [Product] = []
@@ -13,21 +13,21 @@ actor ProductTestCapture {
 
     func setProduct(_ product: Product?) {
         saveCallCount += 1
-        if let product = product {
+        if let product {
             savedProducts.append(product)
         }
     }
 
     func getLatestProduct() -> Product? {
-        return savedProducts.last
+        savedProducts.last
     }
 
     func getAllProducts() -> [Product] {
-        return savedProducts
+        savedProducts
     }
 
     func getSaveCallCount() -> Int {
-        return saveCallCount
+        saveCallCount
     }
 
     func reset() {
@@ -38,7 +38,6 @@ actor ProductTestCapture {
 
 @Suite("Product Edit ViewModel Tests")
 struct ProductEditViewModelSwiftTests {
-
     private func createViewModel(
         input: ProductEditInput?,
         output: ProductEditOutput? = nil
@@ -152,8 +151,7 @@ struct ProductEditViewModelSwiftTests {
 
         await viewModel.onTapSave()
 
-        await MainActor.run {
-        }
+        await MainActor.run {}
     }
 
     @Test("OnTapSave with empty name")

@@ -4,12 +4,11 @@
 //
 
 import Foundation
-import Testing
 @testable import OversizeArchitecture
+import Testing
 
 @Suite("Input Output Tests")
 struct InputOutputSwiftTests {
-
     // MARK: - Product Detail Input Tests
 
     @Test("ProductDetailInput with ID")
@@ -27,7 +26,6 @@ struct InputOutputSwiftTests {
 
         #expect(input.productId == product.id)
     }
-
 
     // MARK: - Product Edit Input Tests
 
@@ -76,15 +74,15 @@ struct InputOutputSwiftTests {
         private var value: T
 
         init(_ initialValue: T) {
-            self.value = initialValue
+            value = initialValue
         }
 
         func setValue(_ newValue: T) {
-            self.value = newValue
+            value = newValue
         }
 
         func getValue() -> T {
-            return value
+            value
         }
     }
 
@@ -111,7 +109,6 @@ struct InputOutputSwiftTests {
         #expect(input.filterType == .favorites)
     }
 
-
     // MARK: - Filter Type Tests
 
     @Test("ProductListFilterType case iterable")
@@ -135,7 +132,7 @@ struct InputOutputSwiftTests {
     @Test("Sendable conformance")
     func sendableConformance() {
         // Test that types conform to Sendable
-        func testSendable<T: Sendable>(_: T.Type) {}
+        func testSendable(_: (some Sendable).Type) {}
 
         testSendable(Product.self)
         testSendable(ProductDetailInput.self)

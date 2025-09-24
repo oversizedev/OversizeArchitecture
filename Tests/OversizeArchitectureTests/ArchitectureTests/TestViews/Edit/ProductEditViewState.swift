@@ -3,12 +3,11 @@
 // ProductEditViewState.swift, created on 17.09.2025
 //
 
-import SwiftUI
 @testable import OversizeArchitecture
+import SwiftUI
 
 @Observable
 public final class ProductEditViewState: ViewStateProtocol {
-
     public var name: String = .init()
 
     public let mode: EditMode
@@ -16,17 +15,17 @@ public final class ProductEditViewState: ViewStateProtocol {
 
     public init(input: ProductEditModule.Input?) {
         if let id = input?.productId {
-            self.mode = .edit
-            self.productId = id
+            mode = .edit
+            productId = id
         } else {
-            self.mode = .create
-            self.productId = UUID()
+            mode = .create
+            productId = UUID()
         }
     }
 
     public enum EditMode {
         case create, edit
-        
+
         var title: String {
             switch self {
             case .create:

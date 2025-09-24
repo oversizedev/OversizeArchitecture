@@ -3,19 +3,18 @@
 // MealProductDetailViewModel.swift, created on 10.07.2025
 //
 
-import SwiftUI
 @testable import OversizeArchitecture
+import SwiftUI
 
 @ViewModel(module: ProductDetailModule.self)
 public actor ProductDetailViewModel: ViewModelProtocol {
-
     func onAppear() async {
-        guard let input = input else { return }
+        guard let input else { return }
 
         switch input.source {
-        case .id(let id):
+        case let .id(id):
             await loadProduct(id: id)
-        case .product(let product):
+        case let .product(product):
             await updateState(with: product)
         }
     }

@@ -4,15 +4,14 @@
 //
 
 import Foundation
-import Testing
 @testable import OversizeArchitecture
+import Testing
 
 @Suite("Module Tests")
 struct ModuleSwiftTests {
-
     @Test("Module protocol conformance")
     func moduleProtocolConformance() {
-        func testModuleProtocol<T: ModuleProtocol>(_: T.Type) {}
+        func testModuleProtocol(_: (some ModuleProtocol).Type) {}
 
         testModuleProtocol(ProductDetailModule.self)
         testModuleProtocol(ProductEditModule.self)
@@ -22,7 +21,7 @@ struct ModuleSwiftTests {
     @Test("ProductDetailModule typealiases")
     func productDetailModuleTypealiases() {
         func testTypealias<T, U>(_: T.Type, _: U.Type) -> Bool {
-            return T.self == U.self
+            T.self == U.self
         }
 
         #expect(testTypealias(ProductDetailModule.Input.self, ProductDetailInput.self))
@@ -34,7 +33,7 @@ struct ModuleSwiftTests {
     @Test("ProductEditModule typealiases")
     func productEditModuleTypealiases() {
         func testTypealias<T, U>(_: T.Type, _: U.Type) -> Bool {
-            return T.self == U.self
+            T.self == U.self
         }
 
         #expect(testTypealias(ProductEditModule.Input.self, ProductEditInput.self))
@@ -46,7 +45,7 @@ struct ModuleSwiftTests {
     @Test("ProductListModule typealiases")
     func productListModuleTypealiases() {
         func testTypealias<T, U>(_: T.Type, _: U.Type) -> Bool {
-            return T.self == U.self
+            T.self == U.self
         }
 
         #expect(testTypealias(ProductListModule.Input.self, ProductListInput.self))

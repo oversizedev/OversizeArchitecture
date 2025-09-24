@@ -4,11 +4,11 @@
 //
 
 import Foundation
-import Testing
 import OversizeArchitecture
 import OversizeArchitectureMacros
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
+import Testing
 
 @Suite("ViewModel Macro Tests")
 struct ViewModelMacroSwiftTests {
@@ -588,5 +588,4 @@ struct ViewModelMacroSwiftTests {
             macros: testMacros
         )
     }
-
 }

@@ -3,8 +3,8 @@
 // TestBuildDestinations.swift, created on 17.09.2025
 //
 
-import SwiftUI
 @testable import OversizeArchitecture
+import SwiftUI
 
 public enum TestBuildDestinations {
     case productList
@@ -12,15 +12,15 @@ public enum TestBuildDestinations {
     case productEdit(id: UUID? = nil, onSave: @Sendable (_ product: Product) -> Void)
 }
 
-extension TestBuildDestinations {
+public extension TestBuildDestinations {
     @ViewBuilder @MainActor
-    public var view: some View {
+    var view: some View {
         switch self {
         case .productList:
             ProductListModule.build()
-        case .productDetail(let id):
+        case let .productDetail(id):
             ProductDetailModule.build(input: .init(id: id))
-        case .productEdit(let id, let onSave):
+        case let .productEdit(id, onSave):
             ProductEditModule.build(
                 input: id.map { .init(id: $0) } ?? .init(),
                 output: .init(onSave: onSave)

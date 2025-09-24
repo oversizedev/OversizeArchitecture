@@ -3,8 +3,8 @@
 // MealProductDetailScreen.swift, created on 10.07.2025
 //
 
-import SwiftUI
 @testable import OversizeArchitecture
+import SwiftUI
 
 @View(module: ProductDetailModule.self)
 public struct ProductDetailView: ViewProtocol {

@@ -4,12 +4,11 @@
 //
 
 import Foundation
-import Testing
 @testable import OversizeArchitecture
+import Testing
 
 @Suite("Product List ViewModel Tests")
 struct ProductListViewModelSwiftTests {
-
     private func createViewModel(
         input: ProductListInput?,
         output: ProductListOutput? = nil

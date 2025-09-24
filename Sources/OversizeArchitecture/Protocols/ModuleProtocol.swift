@@ -1,11 +1,11 @@
 //
 // Copyright © 2025 Alexander Romanov
 // ModuleProtocol.swift, created on 17.09.2025
-//  
+//
 
 import SwiftUI
 
-protocol ModuleProtocol {
+public protocol ModuleProtocol {
     associatedtype Input
     associatedtype Output
     associatedtype ViewState: ViewStateProtocol where ViewState.Input == Input
@@ -13,7 +13,7 @@ protocol ModuleProtocol {
     associatedtype ViewModel: ViewModelProtocol where ViewModel.Input == Input, ViewModel.Output == Output, ViewModel.ViewState == ViewState
 }
 
-extension ModuleProtocol where ViewScene: View {
+public extension ModuleProtocol where ViewScene: View {
     @MainActor
     static func build(input: Input? = nil, output: Output? = nil) -> some View {
         let state = ViewState(input: input)

@@ -32,4 +32,4 @@ public struct ProductListOutput: Sendable {
 }
 
 @Module
-public enum ProductListModule: ModuleProtocol { }
+public enum ProductListModule: ModuleProtocol {}

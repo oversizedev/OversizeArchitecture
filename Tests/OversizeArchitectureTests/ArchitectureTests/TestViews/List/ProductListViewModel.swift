@@ -3,11 +3,10 @@
 // ProductListViewModel.swift, created on 17.09.2025
 //
 
-import SwiftUI
 @testable import OversizeArchitecture
+import SwiftUI
 
 @ViewModel(module: ProductListModule.self)
 public actor ProductListViewModel: ViewModelProtocol {
-    
-    func onAppear() async { }
+    func onAppear() async {}
 }

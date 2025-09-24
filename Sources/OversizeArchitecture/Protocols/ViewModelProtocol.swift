@@ -9,7 +9,6 @@ public protocol ViewModelProtocol: Sendable {
     associatedtype Action: Sendable
     associatedtype ViewState: ViewStateProtocol
 
-    @MainActor
     init(state: ViewState, input: Input?, output: Output?)
 
     func handleAction(_ action: Action) async

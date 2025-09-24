@@ -3,12 +3,12 @@
 // ProductEditViewModel.swift, created on 17.09.2025
 //
 
-import SwiftUI
 @testable import OversizeArchitecture
+import SwiftUI
 
 @ViewModel(module: ProductEditModule.self)
 public actor ProductEditViewModel: ViewModelProtocol {
-    func onAppear() async { }
+    func onAppear() async {}
 
     func onTapSave() async {
         let product = await Product(id: state.productId, name: state.name)
