@@ -20,7 +20,7 @@ struct ViewMacroSwiftTests {
     func viewMacroGeneratesPropertiesAndInitializer() {
         assertMacroExpansion(
             """
-            @ViewMacro(module: ProductDetailModule.self)
+            @ViewMacro(module: ProductDetail.self)
             public struct ProductDetailView: ViewProtocol {
                 public var body: some View {
                     Text(viewState.name)
@@ -29,11 +29,11 @@ struct ViewMacroSwiftTests {
             """,
             expandedSource: """
             public struct ProductDetailView: ViewProtocol {
-                @Bindable var viewState: ProductDetailModule.ViewState
-                let reducer: Reducer<ProductDetailModule.ViewModel>
+                @Bindable var viewState: ProductDetail.ViewState
+                let reducer: Reducer<ProductDetail.ViewModel>
 
                 @MainActor
-                public init(viewState: ProductDetailModule.ViewState, reducer: Reducer<ProductDetailModule.ViewModel>) {
+                public init(viewState: ProductDetail.ViewState, reducer: Reducer<ProductDetail.ViewModel>) {
                     self.viewState = viewState
                     self.reducer = reducer
                 }
@@ -51,7 +51,7 @@ struct ViewMacroSwiftTests {
     func viewMacroOnlyAppliesToStruct() {
         assertMacroExpansion(
             """
-            @ViewMacro(module: ProductDetailModule.self)
+            @ViewMacro(module: ProductDetail.self)
             public class ProductDetailView {
                 public var body: some View {
                     Text("Test")
@@ -76,7 +76,7 @@ struct ViewMacroSwiftTests {
     func viewMacroWithComplexBody() {
         assertMacroExpansion(
             """
-            @ViewMacro(module: ProductEditModule.self)
+            @ViewMacro(module: ProductEdit.self)
             public struct ProductEditView: ViewProtocol {
                 public var body: some View {
                     VStack {
@@ -90,11 +90,11 @@ struct ViewMacroSwiftTests {
             """,
             expandedSource: """
             public struct ProductEditView: ViewProtocol {
-                @Bindable var viewState: ProductEditModule.ViewState
-                let reducer: Reducer<ProductEditModule.ViewModel>
+                @Bindable var viewState: ProductEdit.ViewState
+                let reducer: Reducer<ProductEdit.ViewModel>
 
                 @MainActor
-                public init(viewState: ProductEditModule.ViewState, reducer: Reducer<ProductEditModule.ViewModel>) {
+                public init(viewState: ProductEdit.ViewState, reducer: Reducer<ProductEdit.ViewModel>) {
                     self.viewState = viewState
                     self.reducer = reducer
                 }

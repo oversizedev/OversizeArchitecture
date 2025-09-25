@@ -6,7 +6,7 @@
 @testable import OversizeArchitecture
 import SwiftUI
 
-@View(module: ProductEditModule.self)
+@View(module: ProductEdit.self)
 public struct ProductEditView: ViewProtocol {
     public var body: some View {
         VStack {
@@ -23,7 +23,7 @@ public struct ProductEditView: ViewProtocol {
 }
 
 #Preview("Edit") {
-    ProductEditModule.build(
+    ProductEdit.build(
         input: ProductEditInput(),
         output: ProductEditOutput(onSave: { product in
             print("Saved: \(product.name)")

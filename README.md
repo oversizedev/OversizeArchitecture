@@ -9,7 +9,7 @@ Swift architectural package with macros for automatic MVVM code generation.
 Automatically generates ViewModelProtocol components:
 
 ```swift
-@ViewModel(module: ProductListModule.self)
+@ViewModel(module: ProductList.self)
 public actor ProductListViewModel: ViewModelProtocol {
     func onRefresh() {
         // refresh logic
@@ -33,7 +33,7 @@ Generates:
 Generates View components:
 
 ```swift
-@View(module: ProductListModule.self)
+@View(module: ProductList.self)
 public struct ProductListView: ViewProtocol {
     public var body: some View {
         VStack {
@@ -57,7 +57,7 @@ Generates Module typealiases:
 
 ```swift
 @Module
-public enum ProductListModule: ModuleProtocol {
+public enum ProductList: ModuleProtocol {
 }
 ```
 
@@ -94,7 +94,7 @@ public struct ProductListOutput: Sendable {
 }
 
 @Module
-public enum ProductListModule: ModuleProtocol {
+public enum ProductList: ModuleProtocol {
 }
 
 // ProductListViewState.swift
@@ -104,14 +104,14 @@ public final class ProductListViewState: ViewStateProtocol {
 }
 
 // ProductListViewModel.swift
-@ViewModel(module: ProductListModule.self)
+@ViewModel(module: ProductList.self)
 public actor ProductListViewModel: ViewModelProtocol {
     func onRefresh() { }
     func onFilterSelected(filter: FilterType) { }
 }
 
 // ProductListView.swift
-@View(module: ProductListModule.self)
+@View(module: ProductList.self)
 public struct ProductListView: ViewProtocol {
     public var body: some View {
         // UI code

@@ -21,11 +21,11 @@ struct ModuleMacroSwiftTests {
         assertMacroExpansion(
             """
             @ModuleMacro
-            public enum ProductEditModule: ModuleProtocol {
+            public enum ProductEdit: ModuleProtocol {
             }
             """,
             expandedSource: """
-            public enum ProductEditModule: ModuleProtocol {
+            public enum ProductEdit: ModuleProtocol {
                 public typealias Input = ProductEditInput
                 public typealias Output = ProductEditOutput
                 public typealias ViewState = ProductEditViewState
@@ -58,16 +58,16 @@ struct ModuleMacroSwiftTests {
         )
     }
 
-    @Test("Module macro works with ProductDetailModule")
-    func moduleMacroWorksWithProductDetailModule() {
+    @Test("Module macro works with ProductDetail")
+    func moduleMacroWorksWithProductDetail() {
         assertMacroExpansion(
             """
             @ModuleMacro
-            public enum ProductDetailModule: ModuleProtocol {
+            public enum ProductDetail: ModuleProtocol {
             }
             """,
             expandedSource: """
-            public enum ProductDetailModule: ModuleProtocol {
+            public enum ProductDetail: ModuleProtocol {
                 public typealias Input = ProductDetailInput
                 public typealias Output = ProductDetailOutput
                 public typealias ViewState = ProductDetailViewState
@@ -79,16 +79,16 @@ struct ModuleMacroSwiftTests {
         )
     }
 
-    @Test("Module macro works with ProductListModule")
-    func moduleMacroWorksWithProductListModule() {
+    @Test("Module macro works with ProductList")
+    func moduleMacroWorksWithProductList() {
         assertMacroExpansion(
             """
             @ModuleMacro
-            public enum ProductListModule: ModuleProtocol {
+            public enum ProductList: ModuleProtocol {
             }
             """,
             expandedSource: """
-            public enum ProductListModule: ModuleProtocol {
+            public enum ProductList: ModuleProtocol {
                 public typealias Input = ProductListInput
                 public typealias Output = ProductListOutput
                 public typealias ViewState = ProductListViewState
@@ -105,11 +105,11 @@ struct ModuleMacroSwiftTests {
         assertMacroExpansion(
             """
             @ModuleMacro
-            public struct ProductEditModule: ModuleProtocol {
+            public struct ProductEdit: ModuleProtocol {
             }
             """,
             expandedSource: """
-            public struct ProductEditModule: ModuleProtocol {
+            public struct ProductEdit: ModuleProtocol {
             }
             """,
             diagnostics: [

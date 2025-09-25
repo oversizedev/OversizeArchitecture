@@ -17,11 +17,11 @@ public extension TestBuildDestinations {
     var view: some View {
         switch self {
         case .productList:
-            ProductListModule.build()
+            ProductList.build()
         case let .productDetail(id):
-            ProductDetailModule.build(input: .init(id: id))
+            ProductDetail.build(input: .init(id: id))
         case let .productEdit(id, onSave):
-            ProductEditModule.build(
+            ProductEdit.build(
                 input: id.map { .init(id: $0) } ?? .init(),
                 output: .init(onSave: onSave)
             )

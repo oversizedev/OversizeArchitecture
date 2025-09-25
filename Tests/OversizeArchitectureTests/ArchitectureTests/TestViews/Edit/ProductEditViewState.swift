@@ -13,7 +13,7 @@ public final class ProductEditViewState: ViewStateProtocol {
     public let mode: EditMode
     public let productId: UUID
 
-    public init(input: ProductEditModule.Input?) {
+    public init(input: ProductEdit.Input?) {
         if let id = input?.productId {
             mode = .edit
             productId = id

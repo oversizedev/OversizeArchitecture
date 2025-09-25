@@ -6,7 +6,7 @@
 @testable import OversizeArchitecture
 import SwiftUI
 
-@View(module: ProductDetailModule.self)
+@View(module: ProductDetail.self)
 public struct ProductDetailView: ViewProtocol {
     public var body: some View {
         Text(viewState.name)
@@ -15,5 +15,5 @@ public struct ProductDetailView: ViewProtocol {
 }
 
 #Preview("Detail") {
-    ProductDetailModule.build(input: .init(id: UUID()))
+    ProductDetail.build(input: .init(id: UUID()))
 }

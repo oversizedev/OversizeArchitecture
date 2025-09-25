@@ -6,7 +6,7 @@
 @testable import OversizeArchitecture
 import SwiftUI
 
-@ViewModel(module: ProductListModule.self)
+@ViewModel(module: ProductList.self)
 public actor ProductListViewModel: ViewModelProtocol {
     func onAppear() async {}
 }

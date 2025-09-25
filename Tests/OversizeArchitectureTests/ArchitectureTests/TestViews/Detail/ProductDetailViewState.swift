@@ -11,7 +11,7 @@ public final class ProductDetailViewState: ViewStateProtocol {
     public let id: UUID
     public var name: String = "Product"
 
-    public init(input: ProductDetailModule.Input?) {
+    public init(input: ProductDetail.Input?) {
         id = input?.productId ?? UUID()
     }
 }

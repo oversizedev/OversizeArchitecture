@@ -13,9 +13,9 @@ struct ModuleSwiftTests {
     func moduleProtocolConformance() {
         func testModuleProtocol(_: (some ModuleProtocol).Type) {}
 
-        testModuleProtocol(ProductDetailModule.self)
-        testModuleProtocol(ProductEditModule.self)
-        testModuleProtocol(ProductListModule.self)
+        testModuleProtocol(ProductDetail.self)
+        testModuleProtocol(ProductEdit.self)
+        testModuleProtocol(ProductList.self)
     }
 
     @Test("ProductDetailModule typealiases")
@@ -24,10 +24,10 @@ struct ModuleSwiftTests {
             T.self == U.self
         }
 
-        #expect(testTypealias(ProductDetailModule.Input.self, ProductDetailInput.self))
-        #expect(testTypealias(ProductDetailModule.Output.self, ProductDetailOutput.self))
-        #expect(testTypealias(ProductDetailModule.ViewState.self, ProductDetailViewState.self))
-        #expect(testTypealias(ProductDetailModule.ViewModel.self, ProductDetailViewModel.self))
+        #expect(testTypealias(ProductDetail.Input.self, ProductDetailInput.self))
+        #expect(testTypealias(ProductDetail.Output.self, ProductDetailOutput.self))
+        #expect(testTypealias(ProductDetail.ViewState.self, ProductDetailViewState.self))
+        #expect(testTypealias(ProductDetail.ViewModel.self, ProductDetailViewModel.self))
     }
 
     @Test("ProductEditModule typealiases")
@@ -36,10 +36,10 @@ struct ModuleSwiftTests {
             T.self == U.self
         }
 
-        #expect(testTypealias(ProductEditModule.Input.self, ProductEditInput.self))
-        #expect(testTypealias(ProductEditModule.Output.self, ProductEditOutput.self))
-        #expect(testTypealias(ProductEditModule.ViewState.self, ProductEditViewState.self))
-        #expect(testTypealias(ProductEditModule.ViewModel.self, ProductEditViewModel.self))
+        #expect(testTypealias(ProductEdit.Input.self, ProductEditInput.self))
+        #expect(testTypealias(ProductEdit.Output.self, ProductEditOutput.self))
+        #expect(testTypealias(ProductEdit.ViewState.self, ProductEditViewState.self))
+        #expect(testTypealias(ProductEdit.ViewModel.self, ProductEditViewModel.self))
     }
 
     @Test("ProductListModule typealiases")
@@ -48,9 +48,9 @@ struct ModuleSwiftTests {
             T.self == U.self
         }
 
-        #expect(testTypealias(ProductListModule.Input.self, ProductListInput.self))
-        #expect(testTypealias(ProductListModule.Output.self, ProductListOutput.self))
-        #expect(testTypealias(ProductListModule.ViewState.self, ProductListViewState.self))
-        #expect(testTypealias(ProductListModule.ViewModel.self, ProductListViewModel.self))
+        #expect(testTypealias(ProductList.Input.self, ProductListInput.self))
+        #expect(testTypealias(ProductList.Output.self, ProductListOutput.self))
+        #expect(testTypealias(ProductList.ViewState.self, ProductListViewState.self))
+        #expect(testTypealias(ProductList.ViewModel.self, ProductListViewModel.self))
     }
 }

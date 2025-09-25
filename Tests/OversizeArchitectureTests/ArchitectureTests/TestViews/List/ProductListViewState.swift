@@ -14,7 +14,7 @@ public final class ProductListViewState: ViewStateProtocol {
         filterType.title
     }
 
-    public init(input: ProductListModule.Input?) {
+    public init(input: ProductList.Input?) {
         filterType = input?.filterType ?? .all
     }
 }

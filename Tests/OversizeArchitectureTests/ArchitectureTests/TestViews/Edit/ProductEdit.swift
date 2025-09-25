@@ -47,4 +47,4 @@ public struct ProductEditOutput: Sendable {
 }
 
 @Module
-public enum ProductEditModule: ModuleProtocol {}
+public enum ProductEdit: ModuleProtocol {}

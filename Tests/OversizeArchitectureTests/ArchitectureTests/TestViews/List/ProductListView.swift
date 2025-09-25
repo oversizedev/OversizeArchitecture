@@ -6,7 +6,7 @@
 @testable import OversizeArchitecture
 import SwiftUI
 
-@View(module: ProductListModule.self)
+@View(module: ProductList.self)
 public struct ProductListView: ViewProtocol {
     public var body: some View {
         Text(viewState.title)
@@ -14,5 +14,5 @@ public struct ProductListView: ViewProtocol {
 }
 
 #Preview("List") {
-    ProductListModule.build()
+    ProductList.build()
 }

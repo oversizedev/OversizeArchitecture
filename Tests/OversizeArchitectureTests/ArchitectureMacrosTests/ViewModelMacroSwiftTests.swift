@@ -545,7 +545,7 @@ struct ViewModelMacroSwiftTests {
     func viewModelWithModuleGeneratesPropertiesAndInitializer() {
         assertMacroExpansion(
             """
-            @ViewModelMacro(module: ProductEditModule.self)
+            @ViewModelMacro(module: ProductEdit.self)
             public actor ProductEditViewModel: ViewModelProtocol {
                 func onAppear() async {}
                 func onTapSave() async {}
@@ -554,12 +554,12 @@ struct ViewModelMacroSwiftTests {
             expandedSource: """
             public actor ProductEditViewModel: ViewModelProtocol {
                 @MainActor
-                public var state: ProductEditModule.ViewState
-                private let input: ProductEditModule.Input?
-                private let output: ProductEditModule.Output?
+                public var state: ProductEdit.ViewState
+                private let input: ProductEdit.Input?
+                private let output: ProductEdit.Output?
 
                 @MainActor
-                public init(state: ProductEditModule.ViewState, input: ProductEditModule.Input?, output: ProductEditModule.Output?) {
+                public init(state: ProductEdit.ViewState, input: ProductEdit.Input?, output: ProductEdit.Output?) {
                     self.state = state
                     self.input = input
                     self.output = output

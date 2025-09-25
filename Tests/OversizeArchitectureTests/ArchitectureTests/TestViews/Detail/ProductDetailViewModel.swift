@@ -6,7 +6,7 @@
 @testable import OversizeArchitecture
 import SwiftUI
 
-@ViewModel(module: ProductDetailModule.self)
+@ViewModel(module: ProductDetail.self)
 public actor ProductDetailViewModel: ViewModelProtocol {
     func onAppear() async {
         guard let input else { return }
