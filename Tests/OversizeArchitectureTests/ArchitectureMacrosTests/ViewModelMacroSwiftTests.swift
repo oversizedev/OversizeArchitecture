@@ -1,6 +1,6 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ViewModelMacroSwiftTests.swift, created on 18.09.2025
+// ViewModelMacroSwiftTests.swift, created on 18.09.2024
 //
 
 import Foundation
