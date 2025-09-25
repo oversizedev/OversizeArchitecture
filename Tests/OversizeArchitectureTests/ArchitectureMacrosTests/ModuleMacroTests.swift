@@ -1,6 +1,6 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ModuleMacroSwiftTests.swift, created on 18.09.2025
+// ModuleMacroTests.swift, created on 18.09.2025
 //
 
 import Foundation
@@ -11,7 +11,7 @@ import SwiftSyntaxMacrosTestSupport
 import Testing
 
 @Suite("Module Macro Tests")
-struct ModuleMacroSwiftTests {
+struct ModuleMacroTests {
     let testMacros: [String: Macro.Type] = [
         "ModuleMacro": ModuleMacro.self,
     ]

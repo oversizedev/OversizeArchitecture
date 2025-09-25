@@ -8,7 +8,7 @@ import Foundation
 import Testing
 
 @Suite("View State Tests")
-struct ViewStateSwiftTests {
+struct ViewStateTests {
     // MARK: - Product Detail View State Tests
 
     @Test("ProductDetailViewState with input")

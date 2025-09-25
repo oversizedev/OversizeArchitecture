@@ -1,6 +1,6 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ProductDetailViewModelSwiftTests.swift, created on 18.09.2025
+// ProductDetailViewModelTests.swift, created on 18.09.2025
 //
 
 import Foundation
@@ -8,7 +8,7 @@ import Foundation
 import Testing
 
 @Suite("Product Detail ViewModel Tests")
-struct ProductDetailViewModelSwiftTests {
+struct ProductDetailViewModelTests {
     private func createViewModel(
         input: ProductDetailInput?,
         output: ProductDetailOutput? = nil

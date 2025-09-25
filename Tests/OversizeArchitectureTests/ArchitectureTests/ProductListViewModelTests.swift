@@ -1,6 +1,6 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ProductListViewModelSwiftTests.swift, created on 18.09.2025
+// ProductListViewModelTests.swift, created on 18.09.2025
 //
 
 import Foundation
@@ -8,7 +8,7 @@ import Foundation
 import Testing
 
 @Suite("Product List ViewModel Tests")
-struct ProductListViewModelSwiftTests {
+struct ProductListViewModelTests {
     private func createViewModel(
         input: ProductListInput?,
         output: ProductListOutput? = nil

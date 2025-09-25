@@ -1,6 +1,6 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ProductSwiftTestingTests.swift, created on 18.09.2025
+// ProductTests.swift, created on 18.09.2025
 //
 
 import Foundation
@@ -8,7 +8,7 @@ import Foundation
 import Testing
 
 @Suite("Product Swift Testing Demo")
-struct ProductSwiftTestingTests {
+struct ProductTests {
     @Test("Product initialization")
     func productInitialization() {
         let id = UUID()

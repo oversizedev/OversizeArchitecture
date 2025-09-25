@@ -1,6 +1,6 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ProductEditViewModelSwiftTests.swift, created on 18.09.2025
+// ProductEditViewModelTests.swift, created on 18.09.2025
 //
 
 import Foundation
@@ -37,7 +37,7 @@ actor ProductTestCapture {
 }
 
 @Suite("Product Edit ViewModel Tests")
-struct ProductEditViewModelSwiftTests {
+struct ProductEditViewModelTests {
     private func createViewModel(
         input: ProductEditInput?,
         output: ProductEditOutput? = nil

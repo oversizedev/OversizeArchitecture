@@ -1,6 +1,6 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ModuleSwiftTests.swift, created on 18.09.2025
+// ModuleTests.swift, created on 18.09.2025
 //
 
 import Foundation
@@ -8,7 +8,7 @@ import Foundation
 import Testing
 
 @Suite("Module Tests")
-struct ModuleSwiftTests {
+struct ModuleTests {
     @Test("Module protocol conformance")
     func moduleProtocolConformance() {
         func testModuleProtocol(_: (some ModuleProtocol).Type) {}

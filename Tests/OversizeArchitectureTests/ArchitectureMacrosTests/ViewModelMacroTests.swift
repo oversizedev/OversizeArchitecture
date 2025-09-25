@@ -1,6 +1,6 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ViewModelMacroSwiftTests.swift, created on 18.09.2024
+// ViewModelMacroTests.swift, created on 18.09.2024
 //
 
 import Foundation
@@ -11,7 +11,7 @@ import SwiftSyntaxMacrosTestSupport
 import Testing
 
 @Suite("ViewModel Macro Tests")
-struct ViewModelMacroSwiftTests {
+struct ViewModelMacroTests {
     let testMacros: [String: Macro.Type] = [
         "ViewModelMacro": ViewModelMacro.self,
     ]

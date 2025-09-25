@@ -1,6 +1,6 @@
 //
 // Copyright © 2025 Alexander Romanov
-// InputOutputSwiftTests.swift, created on 18.09.2025
+// InputOutputTests.swift, created on 18.09.2025
 //
 
 import Foundation
@@ -8,7 +8,7 @@ import Foundation
 import Testing
 
 @Suite("Input Output Tests")
-struct InputOutputSwiftTests {
+struct InputOutputTests {
     // MARK: - Product Detail Input Tests
 
     @Test("ProductDetailInput with ID")
