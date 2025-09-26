@@ -9,6 +9,5 @@ public protocol ViewProtocol: View {
     associatedtype ViewState: ViewStateProtocol
     associatedtype ViewModel: ViewModelProtocol
 
-    @MainActor
     init(viewState: ViewState, reducer: Reducer<ViewModel>)
 }

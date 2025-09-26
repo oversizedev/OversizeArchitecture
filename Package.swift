@@ -6,7 +6,7 @@ import PackageDescription
 
 let package = Package(
     name: "OversizeArchitecture",
-    platforms: [.macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6), .macCatalyst(.v13)],
+    platforms: [.macOS(.v14), .iOS(.v16), .tvOS(.v16), .watchOS(.v10)],
     products: [
         .library(
             name: "OversizeArchitecture",

@@ -1,20 +1,23 @@
 //
 // Copyright © 2025 Alexander Romanov
-// ViewModelMacroTests.swift, created on 12.09.2025
+// ViewModelMacroTests.swift, created on 18.09.2025
 //
 
+import Foundation
 import OversizeArchitecture
 import OversizeArchitectureMacros
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
-import XCTest
+import Testing
 
-final class ViewModelMacroTests: XCTestCase {
+@Suite("ViewModel Macro Tests")
+struct ViewModelMacroTests {
     let testMacros: [String: Macro.Type] = [
         "ViewModelMacro": ViewModelMacro.self,
     ]
 
-    func testSimpleOnMethodsGenerateActions() throws {
+    @Test("Simple on methods generate actions")
+    func simpleOnMethodsGenerateActions() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -66,7 +69,8 @@ final class ViewModelMacroTests: XCTestCase {
         )
     }
 
-    func testOnMethodsWithParametersGenerateActionsWithAssociatedValues() throws {
+    @Test("On methods with parameters generate actions with associated values")
+    func onMethodsWithParametersGenerateActionsWithAssociatedValues() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -123,7 +127,8 @@ final class ViewModelMacroTests: XCTestCase {
         )
     }
 
-    func testPrivateOnMethodsAreIgnored() throws {
+    @Test("Private on methods are ignored")
+    func privateOnMethodsAreIgnored() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -172,7 +177,8 @@ final class ViewModelMacroTests: XCTestCase {
         )
     }
 
-    func testNonOnMethodsAreIgnored() throws {
+    @Test("Non-on methods are ignored")
+    func nonOnMethodsAreIgnored() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -220,7 +226,8 @@ final class ViewModelMacroTests: XCTestCase {
         )
     }
 
-    func testClassSupport() throws {
+    @Test("Class support")
+    func classSupport() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -267,7 +274,8 @@ final class ViewModelMacroTests: XCTestCase {
         )
     }
 
-    func testEmptyActorGeneratesEmptyEnum() throws {
+    @Test("Empty actor generates empty enum")
+    func emptyActorGeneratesEmptyEnum() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -306,7 +314,8 @@ final class ViewModelMacroTests: XCTestCase {
         )
     }
 
-    func testMacroOnlyAppliesToClassAndActor() throws {
+    @Test("Macro only applies to class and actor")
+    func macroOnlyAppliesToClassAndActor() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -327,7 +336,8 @@ final class ViewModelMacroTests: XCTestCase {
         )
     }
 
-    func testComplexParameterLabels() throws {
+    @Test("Complex parameter labels")
+    func complexParameterLabels() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -374,7 +384,8 @@ final class ViewModelMacroTests: XCTestCase {
         )
     }
 
-    func testRealWorldExample() throws {
+    @Test("Real world example")
+    func realWorldExample() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -443,7 +454,8 @@ final class ViewModelMacroTests: XCTestCase {
         )
     }
 
-    func testHandleActionMethodGeneration() throws {
+    @Test("Handle action method generation")
+    func handleActionMethodGeneration() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -495,7 +507,8 @@ final class ViewModelMacroTests: XCTestCase {
         )
     }
 
-    func testEmptyViewModelHandleAction() throws {
+    @Test("Empty ViewModel handle action")
+    func emptyViewModelHandleAction() {
         assertMacroExpansion(
             """
             @ViewModelMacro
@@ -521,6 +534,54 @@ final class ViewModelMacroTests: XCTestCase {
 
             extension EmptyViewModel {
                 public enum Action: Sendable {
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+
+    @Test("ViewModel with module generates properties and initializer")
+    func viewModelWithModuleGeneratesPropertiesAndInitializer() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro(module: ProductEdit.self)
+            public actor ProductEditViewModel: ViewModelProtocol {
+                func onAppear() async {}
+                func onTapSave() async {}
+            }
+            """,
+            expandedSource: """
+            public actor ProductEditViewModel: ViewModelProtocol {
+                @MainActor
+                public var state: ProductEdit.ViewState
+                private let input: ProductEdit.Input?
+                private let output: ProductEdit.Output?
+
+                @MainActor
+                public init(state: ProductEdit.ViewState, input: ProductEdit.Input?, output: ProductEdit.Output?) {
+                    self.state = state
+                    self.input = input
+                    self.output = output
+                }
+
+                func onAppear() async {}
+                func onTapSave() async {}
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case .onAppear:
+                        await onAppear()
+                    case .onTapSave:
+                        await onTapSave()
+                    }
+                }
+            }
+
+            extension ProductEditViewModel {
+                public enum Action: Sendable {
+                    case onAppear
+                    case onTapSave
                 }
             }
             """,

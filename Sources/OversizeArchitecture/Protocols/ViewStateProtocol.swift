@@ -4,7 +4,11 @@
 //
 
 @MainActor
-public protocol ViewStateProtocol: Sendable {}
+public protocol ViewStateProtocol: Sendable {
+    associatedtype Input
+
+    init(input: Input?)
+}
 
 public extension ViewStateProtocol {
     func update(_ handler: @Sendable @MainActor (Self) -> Void) async {
