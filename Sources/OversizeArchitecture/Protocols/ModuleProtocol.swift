@@ -28,7 +28,7 @@ public extension ModuleProtocol where ViewScene: View {
 
     @MainActor
     static func buildCached(
-        cacheKey: String,
+        cacheKey: String = String(describing: Self.self),
         input: Input? = nil,
         output: Output? = nil
     ) -> some View {
@@ -42,5 +42,20 @@ public extension ModuleProtocol where ViewScene: View {
         )
         let reducer = Reducer(viewModel: viewModel)
         return ViewScene(viewState: state, reducer: reducer)
+    }
+}
+
+public extension ModuleProtocol {
+    @MainActor
+    static func buildVC(input: Input? = nil, output: Output? = nil) -> UIViewController {
+        let state = ViewState(input: input)
+        let viewModel = ViewModel(
+            state: state,
+            input: input,
+            output: output
+        )
+        let reducer = Reducer(viewModel: viewModel)
+        let view = ViewScene(viewState: state, reducer: reducer)
+        return UIHostingController(rootView: view)
     }
 }
