@@ -7,7 +7,6 @@ import Foundation
 @testable import OversizeArchitecture
 import Testing
 
-@Suite("Module Tests")
 struct ModuleTests {
     @Test("Module protocol conformance")
     func moduleProtocolConformance() {

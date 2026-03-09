@@ -5,7 +5,7 @@
 
 import Foundation
 
-public final class Reducer<ViewModel>: Sendable where ViewModel: ViewModelProtocol {
+public final class Reducer<ViewModel: ViewModelProtocol>: Sendable {
     private let viewModel: ViewModel
 
     public init(viewModel: ViewModel) {

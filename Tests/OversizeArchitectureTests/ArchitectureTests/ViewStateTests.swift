@@ -7,7 +7,6 @@ import Foundation
 @testable import OversizeArchitecture
 import Testing
 
-@Suite("View State Tests")
 struct ViewStateTests {
     // MARK: - Product Detail View State Tests
 

@@ -25,4 +25,22 @@ public extension ModuleProtocol where ViewScene: View {
         let reducer = Reducer(viewModel: viewModel)
         return ViewScene(viewState: state, reducer: reducer)
     }
+
+    @MainActor
+    static func buildCached(
+        cacheKey: String = String(describing: Self.self),
+        input: Input? = nil,
+        output: Output? = nil
+    ) -> some View {
+        let state = ViewStateCache.shared.getOrCreate(key: cacheKey) {
+            ViewState(input: input)
+        }
+        let viewModel = ViewModel(
+            state: state,
+            input: input,
+            output: output
+        )
+        let reducer = Reducer(viewModel: viewModel)
+        return ViewScene(viewState: state, reducer: reducer)
+    }
 }

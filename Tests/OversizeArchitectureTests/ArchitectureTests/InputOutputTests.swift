@@ -7,7 +7,6 @@ import Foundation
 @testable import OversizeArchitecture
 import Testing
 
-@Suite("Input Output Tests")
 struct InputOutputTests {
     // MARK: - Product Detail Input Tests
 
@@ -131,7 +130,7 @@ struct InputOutputTests {
 
     @Test("Sendable conformance")
     func sendableConformance() {
-        // Test that types conform to Sendable
+        /// Test that types conform to Sendable
         func testSendable(_: (some Sendable).Type) {}
 
         testSendable(Product.self)

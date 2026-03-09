@@ -20,8 +20,7 @@ public struct ModuleMacro: MemberMacro {
 
         let prefix = extractPrefix(from: node) ?? extractPrefixFromName(declaration: declaration)
 
-        let members = generateModuleTypealiases(prefix: prefix)
-        return members
+        return generateModuleTypealiases(prefix: prefix)
     }
 }
 

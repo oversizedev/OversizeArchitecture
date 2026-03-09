@@ -7,7 +7,6 @@ import Foundation
 @testable import OversizeArchitecture
 import Testing
 
-@Suite("Product Swift Testing Demo")
 struct ProductTests {
     @Test("Product initialization")
     func productInitialization() {
@@ -51,7 +50,7 @@ struct ProductTests {
     }
 
     @Test("Product detail input with different sources")
-    func productDetailInputSources() async {
+    func productDetailInputSources() {
         let productId = UUID()
         let product = Product(id: productId, name: "Test Product")
 
@@ -125,7 +124,7 @@ extension Tag {
     @Tag static var async: Self
 }
 
-@Suite("Tagged Tests Demo", .tags(.product, .async))
+@Suite(.tags(.product, .async))
 struct TaggedProductTests {
     @Test("Async product creation", .tags(.product))
     func asyncProductCreation() async {

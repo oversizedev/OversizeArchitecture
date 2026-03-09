@@ -36,7 +36,6 @@ actor ProductTestCapture {
     }
 }
 
-@Suite("Product Edit ViewModel Tests")
 struct ProductEditViewModelTests {
     private func createViewModel(
         input: ProductEditInput?,
