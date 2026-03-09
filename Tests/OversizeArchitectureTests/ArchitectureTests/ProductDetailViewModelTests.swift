@@ -7,7 +7,6 @@ import Foundation
 @testable import OversizeArchitecture
 import Testing
 
-@Suite("Product Detail ViewModel Tests")
 struct ProductDetailViewModelTests {
     private func createViewModel(
         input: ProductDetailInput?,

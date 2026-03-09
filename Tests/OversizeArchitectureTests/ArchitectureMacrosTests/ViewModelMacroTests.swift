@@ -10,7 +10,6 @@ import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import Testing
 
-@Suite("ViewModel Macro Tests")
 struct ViewModelMacroTests {
     let testMacros: [String: Macro.Type] = [
         "ViewModelMacro": ViewModelMacro.self,
