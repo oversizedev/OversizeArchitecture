@@ -5,11 +5,12 @@
 
 import Foundation
 
-public struct Callback<Value>: Hashable, Equatable {
+public struct Callback<Value>: Hashable, Sendable {
+    
     public let identifier: String
-    public let handler: (Value) -> Void
+    public let handler: @Sendable (Value) -> Void
 
-    public init(_ identifier: String = UUID().uuidString, handler: @escaping (Value) -> Void) {
+    public init(_ identifier: String = UUID().uuidString, handler: @Sendable @escaping (Value) -> Void) {
         self.identifier = identifier
         self.handler = handler
     }
