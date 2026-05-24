@@ -6,7 +6,6 @@
 import Foundation
 
 public struct Callback<Value>: Hashable, Sendable {
-    
     public let identifier: String
     public let handler: @Sendable (Value) -> Void
 

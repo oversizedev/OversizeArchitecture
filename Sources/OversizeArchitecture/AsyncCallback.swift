@@ -6,7 +6,6 @@
 import SwiftUI
 
 public struct AsyncCallback<Value>: Hashable, Equatable, Sendable {
-
     public let identifier: String
     public let handler: @Sendable (Value) async throws -> Void
 
@@ -26,5 +25,4 @@ public struct AsyncCallback<Value>: Hashable, Equatable, Sendable {
     public static func == (lhs: AsyncCallback<Value>, rhs: AsyncCallback<Value>) -> Bool {
         lhs.identifier == rhs.identifier
     }
-
 }
