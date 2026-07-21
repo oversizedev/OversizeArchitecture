@@ -29,6 +29,7 @@ struct ViewMacroTests {
             expandedSource: """
             public struct ProductDetailView: ViewProtocol {
                 @Bindable var viewState: ProductDetail.ViewState
+
                 let reducer: Reducer<ProductDetail.ViewModel>
 
                 @MainActor
@@ -90,6 +91,7 @@ struct ViewMacroTests {
             expandedSource: """
             public struct ProductEditView: ViewProtocol {
                 @Bindable var viewState: ProductEdit.ViewState
+
                 let reducer: Reducer<ProductEdit.ViewModel>
 
                 @MainActor

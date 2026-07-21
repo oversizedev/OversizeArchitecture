@@ -26,9 +26,13 @@ struct ModuleMacroTests {
             expandedSource: """
             public enum ProductEdit: ModuleProtocol {
                 public typealias Input = ProductEditInput
+
                 public typealias Output = ProductEditOutput
+
                 public typealias ViewState = ProductEditViewState
+
                 public typealias ViewModel = ProductEditViewModel
+
                 public typealias ViewScene = ProductEditView
             }
             """,
@@ -47,9 +51,13 @@ struct ModuleMacroTests {
             expandedSource: """
             public enum SomeModule: ModuleProtocol {
                 public typealias Input = CustomNameInput
+
                 public typealias Output = CustomNameOutput
+
                 public typealias ViewState = CustomNameViewState
+
                 public typealias ViewModel = CustomNameViewModel
+
                 public typealias ViewScene = CustomNameView
             }
             """,
@@ -68,9 +76,13 @@ struct ModuleMacroTests {
             expandedSource: """
             public enum ProductDetail: ModuleProtocol {
                 public typealias Input = ProductDetailInput
+
                 public typealias Output = ProductDetailOutput
+
                 public typealias ViewState = ProductDetailViewState
+
                 public typealias ViewModel = ProductDetailViewModel
+
                 public typealias ViewScene = ProductDetailView
             }
             """,
@@ -89,9 +101,13 @@ struct ModuleMacroTests {
             expandedSource: """
             public enum ProductList: ModuleProtocol {
                 public typealias Input = ProductListInput
+
                 public typealias Output = ProductListOutput
+
                 public typealias ViewState = ProductListViewState
+
                 public typealias ViewModel = ProductListViewModel
+
                 public typealias ViewScene = ProductListView
             }
             """,
@@ -129,9 +145,13 @@ struct ModuleMacroTests {
             expandedSource: """
             public enum UserProfile: ModuleProtocol {
                 public typealias Input = UserProfileInput
+
                 public typealias Output = UserProfileOutput
+
                 public typealias ViewState = UserProfileViewState
+
                 public typealias ViewModel = UserProfileViewModel
+
                 public typealias ViewScene = UserProfileView
             }
             """,

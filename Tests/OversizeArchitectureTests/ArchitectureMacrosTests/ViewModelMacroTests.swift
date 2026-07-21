@@ -554,7 +554,9 @@ struct ViewModelMacroTests {
             public actor ProductEditViewModel: ViewModelProtocol {
                 @MainActor
                 public var state: ProductEdit.ViewState
+
                 private let input: ProductEdit.Input?
+
                 private let output: ProductEdit.Output?
 
                 @MainActor
