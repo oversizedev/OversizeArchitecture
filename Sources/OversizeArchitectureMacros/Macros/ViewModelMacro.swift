@@ -140,6 +140,29 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
         }
     }
 
+    private static func methodIsAsync(_ method: FunctionDeclSyntax) -> Bool {
+        method.signature.effectSpecifiers?.asyncSpecifier != nil
+    }
+
+    /// A method explicitly isolated to a global actor (e.g. `@MainActor`, or a qualified
+    /// custom global actor such as `@Namespace.UIActor`) needs an actor hop from the
+    /// generated, non-isolated `handleAction`, so `await` must be kept even though the
+    /// method itself is not `async`.
+    private static func methodHasExplicitGlobalActorAttribute(_ method: FunctionDeclSyntax) -> Bool {
+        method.attributes.contains {
+            guard case let .attribute(attr) = $0 else { return false }
+            let lastComponent: String? = if let ident = attr.attributeName.as(IdentifierTypeSyntax.self) {
+                ident.name.text
+            } else if let member = attr.attributeName.as(MemberTypeSyntax.self) {
+                member.name.text
+            } else {
+                nil
+            }
+            guard let lastComponent else { return false }
+            return lastComponent.hasSuffix("Actor") && lastComponent != "reasync"
+        }
+    }
+
     private static func generateHandleActionMethod(from methods: [FunctionDeclSyntax]) -> FunctionDeclSyntax {
         if methods.isEmpty {
             return try! FunctionDeclSyntax(
@@ -155,10 +178,12 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
         for method in methods {
             let methodName = method.name.text
             let caseName = methodName
+            let needsAwait = methodIsAsync(method) || methodHasExplicitGlobalActorAttribute(method)
+            let callPrefix = needsAwait ? "await " : ""
 
             if method.signature.parameterClause.parameters.isEmpty {
                 caseStatements.append("case .\(caseName):")
-                caseStatements.append("    await \(methodName)()")
+                caseStatements.append("    \(callPrefix)\(methodName)()")
             } else {
                 let parameters = method.signature.parameterClause.parameters
 
@@ -181,7 +206,7 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
                 let callPattern = callArgs.joined(separator: ", ")
 
                 caseStatements.append("case let .\(caseName)(\(casePattern)):")
-                caseStatements.append("    await \(methodName)(\(callPattern))")
+                caseStatements.append("    \(callPrefix)\(methodName)(\(callPattern))")
             }
         }
 
