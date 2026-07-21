@@ -5,6 +5,7 @@
 
 import Foundation
 @testable import OversizeArchitecture
+import SwiftUI
 import Testing
 
 struct ModuleTests {
@@ -15,6 +16,20 @@ struct ModuleTests {
         testModuleProtocol(ProductDetail.self)
         testModuleProtocol(ProductEdit.self)
         testModuleProtocol(ProductList.self)
+    }
+
+    @MainActor
+    @Test("Module build APIs compile")
+    func moduleBuildAPIsCompile() {
+        let product = Product(id: UUID(), name: "Test Product")
+        let detailView = ProductDetail.build(input: .init(product: product))
+        let cachedDetailView = ProductDetail.buildCached(
+            cacheKey: product.id.uuidString,
+            input: .init(product: product)
+        )
+
+        _ = AnyView(detailView)
+        _ = AnyView(cachedDetailView)
     }
 
     @Test("ProductDetailModule typealiases")

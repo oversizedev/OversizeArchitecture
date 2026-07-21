@@ -552,9 +552,14 @@ struct ViewModelMacroTests {
             """,
             expandedSource: """
             public actor ProductEditViewModel: ViewModelProtocol {
+                func onAppear() async {}
+                func onTapSave() async {}
+
                 @MainActor
                 public var state: ProductEdit.ViewState
+
                 private let input: ProductEdit.Input?
+
                 private let output: ProductEdit.Output?
 
                 @MainActor
@@ -563,9 +568,6 @@ struct ViewModelMacroTests {
                     self.input = input
                     self.output = output
                 }
-
-                func onAppear() async {}
-                func onTapSave() async {}
 
                 public func handleAction(_ action: Action) async {
                     switch action {
@@ -580,6 +582,137 @@ struct ViewModelMacroTests {
             extension ProductEditViewModel {
                 public enum Action: Sendable {
                     case onAppear
+                    case onTapSave
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+
+    @Test("Synchronous on methods without attributes call without await")
+    func synchronousOnMethodsWithoutAttributesCallWithoutAwait() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro
+            public actor TestViewModel: ViewModelProtocol {
+                public var state: TestViewState
+
+                public init(state: TestViewState) {
+                    self.state = state
+                }
+
+                func onTapSave() {}
+            }
+            """,
+            expandedSource: """
+            public actor TestViewModel: ViewModelProtocol {
+                public var state: TestViewState
+
+                public init(state: TestViewState) {
+                    self.state = state
+                }
+
+                func onTapSave() {}
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case .onTapSave:
+                        onTapSave()
+                    }
+                }
+            }
+
+            extension TestViewModel {
+                public enum Action: Sendable {
+                    case onTapSave
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+
+    @Test("Synchronous on methods with an explicit global actor keep await")
+    func synchronousOnMethodsWithGlobalActorKeepAwait() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro
+            public class TestViewModel: ViewModelProtocol {
+                public var state: TestViewState
+
+                public init(state: TestViewState) {
+                    self.state = state
+                }
+
+                @MainActor func onTapSave() {}
+            }
+            """,
+            expandedSource: """
+            public class TestViewModel: ViewModelProtocol {
+                public var state: TestViewState
+
+                public init(state: TestViewState) {
+                    self.state = state
+                }
+
+                @MainActor func onTapSave() {}
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case .onTapSave:
+                        await onTapSave()
+                    }
+                }
+            }
+
+            extension TestViewModel {
+                public enum Action: Sendable {
+                    case onTapSave
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+
+    @Test("Synchronous on methods keep await when the whole type is globally isolated")
+    func synchronousOnMethodsKeepAwaitWhenTypeIsGloballyIsolated() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro
+            @MainActor
+            public class TestViewModel: ViewModelProtocol {
+                public var state: TestViewState
+
+                public init(state: TestViewState) {
+                    self.state = state
+                }
+
+                func onTapSave() {}
+            }
+            """,
+            expandedSource: """
+            @MainActor
+            public class TestViewModel: ViewModelProtocol {
+                public var state: TestViewState
+
+                public init(state: TestViewState) {
+                    self.state = state
+                }
+
+                func onTapSave() {}
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case .onTapSave:
+                        await onTapSave()
+                    }
+                }
+            }
+
+            extension TestViewModel {
+                public enum Action: Sendable {
                     case onTapSave
                 }
             }

@@ -16,14 +16,11 @@ public protocol ModuleProtocol {
 public extension ModuleProtocol where ViewScene: View {
     @MainActor
     static func build(input: Input? = nil, output: Output? = nil) -> some View {
-        let state = ViewState(input: input)
-        let viewModel = ViewModel(
-            state: state,
+        ModuleHost<Self>(
             input: input,
-            output: output
+            output: output,
+            cacheKey: nil
         )
-        let reducer = Reducer(viewModel: viewModel)
-        return ViewScene(viewState: state, reducer: reducer)
     }
 
     @MainActor
@@ -32,15 +29,70 @@ public extension ModuleProtocol where ViewScene: View {
         input: Input? = nil,
         output: Output? = nil
     ) -> some View {
-        let state = ViewStateCache.shared.getOrCreate(key: cacheKey) {
-            ViewState(input: input)
+        // `.id(cacheKey)` forces SwiftUI to give the `ModuleHost` a new identity when the
+        // key changes, so its `@StateObject` is recreated instead of keeping the previous
+        // instance (with stale `input`/`output`) alive under the caller's stable view identity.
+        ModuleHost<Self>(
+            input: input,
+            output: output,
+            cacheKey: cacheKey
+        )
+        .id(cacheKey)
+    }
+}
+
+// MARK: - Module Lifecycle
+
+@MainActor
+private final class ModuleInstance<Module: ModuleProtocol>: ObservableObject where Module.ViewScene: View {
+    let viewState: Module.ViewState
+    let viewModel: Module.ViewModel
+    let reducer: Reducer<Module.ViewModel>
+
+    init(
+        input: Module.Input?,
+        output: Module.Output?,
+        cacheKey: String?
+    ) {
+        if let cacheKey {
+            viewState = ViewStateCache.shared.getOrCreate(key: cacheKey) {
+                Module.ViewState(input: input)
+            }
+        } else {
+            viewState = Module.ViewState(input: input)
         }
-        let viewModel = ViewModel(
-            state: state,
+
+        viewModel = Module.ViewModel(
+            state: viewState,
             input: input,
             output: output
         )
-        let reducer = Reducer(viewModel: viewModel)
-        return ViewScene(viewState: state, reducer: reducer)
+        reducer = Reducer(viewModel: viewModel)
+    }
+}
+
+private struct ModuleHost<Module: ModuleProtocol>: View where Module.ViewScene: View {
+    @StateObject private var instance: ModuleInstance<Module>
+
+    @MainActor
+    init(
+        input: Module.Input?,
+        output: Module.Output?,
+        cacheKey: String?
+    ) {
+        _instance = StateObject(
+            wrappedValue: ModuleInstance(
+                input: input,
+                output: output,
+                cacheKey: cacheKey
+            )
+        )
+    }
+
+    var body: some View {
+        Module.ViewScene(
+            viewState: instance.viewState,
+            reducer: instance.reducer
+        )
     }
 }

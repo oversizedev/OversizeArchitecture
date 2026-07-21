@@ -6,7 +6,7 @@ import PackageDescription
 
 let package = Package(
     name: "OversizeArchitecture",
-    platforms: [.macOS(.v14), .iOS(.v16), .tvOS(.v16), .watchOS(.v10)],
+    platforms: [.macOS(.v14), .iOS(.v17), .tvOS(.v17), .watchOS(.v10)],
     products: [
         .library(
             name: "OversizeArchitecture",
@@ -14,8 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-syntax.git", .upToNextMajor(from: "602.0.0")),
-        // .package(url: "https://github.com/swiftlang/swift-syntax.git", "509.0.0" ..< "603.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-syntax", "600.0.0" ..< "604.0.0")
     ],
     targets: [
         .macro(
