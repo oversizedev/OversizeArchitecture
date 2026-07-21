@@ -28,6 +28,10 @@ struct ViewMacroTests {
             """,
             expandedSource: """
             public struct ProductDetailView: ViewProtocol {
+                public var body: some View {
+                    Text(viewState.name)
+                }
+
                 @Bindable var viewState: ProductDetail.ViewState
 
                 let reducer: Reducer<ProductDetail.ViewModel>
@@ -36,10 +40,6 @@ struct ViewMacroTests {
                 public init(viewState: ProductDetail.ViewState, reducer: Reducer<ProductDetail.ViewModel>) {
                     self.viewState = viewState
                     self.reducer = reducer
-                }
-
-                public var body: some View {
-                    Text(viewState.name)
                 }
             }
             """,
@@ -90,6 +90,15 @@ struct ViewMacroTests {
             """,
             expandedSource: """
             public struct ProductEditView: ViewProtocol {
+                public var body: some View {
+                    VStack {
+                        Text(viewState.name)
+                        Button("Save") {
+                            reducer.callAsFunction(.onTapSave)
+                        }
+                    }
+                }
+
                 @Bindable var viewState: ProductEdit.ViewState
 
                 let reducer: Reducer<ProductEdit.ViewModel>
@@ -98,15 +107,6 @@ struct ViewMacroTests {
                 public init(viewState: ProductEdit.ViewState, reducer: Reducer<ProductEdit.ViewModel>) {
                     self.viewState = viewState
                     self.reducer = reducer
-                }
-
-                public var body: some View {
-                    VStack {
-                        Text(viewState.name)
-                        Button("Save") {
-                            reducer.callAsFunction(.onTapSave)
-                        }
-                    }
                 }
             }
             """,

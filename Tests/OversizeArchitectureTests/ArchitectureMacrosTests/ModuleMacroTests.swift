@@ -25,6 +25,7 @@ struct ModuleMacroTests {
             """,
             expandedSource: """
             public enum ProductEdit: ModuleProtocol {
+
                 public typealias Input = ProductEditInput
 
                 public typealias Output = ProductEditOutput
@@ -50,6 +51,7 @@ struct ModuleMacroTests {
             """,
             expandedSource: """
             public enum SomeModule: ModuleProtocol {
+
                 public typealias Input = CustomNameInput
 
                 public typealias Output = CustomNameOutput
@@ -75,6 +77,7 @@ struct ModuleMacroTests {
             """,
             expandedSource: """
             public enum ProductDetail: ModuleProtocol {
+
                 public typealias Input = ProductDetailInput
 
                 public typealias Output = ProductDetailOutput
@@ -100,6 +103,7 @@ struct ModuleMacroTests {
             """,
             expandedSource: """
             public enum ProductList: ModuleProtocol {
+
                 public typealias Input = ProductListInput
 
                 public typealias Output = ProductListOutput
@@ -144,6 +148,7 @@ struct ModuleMacroTests {
             """,
             expandedSource: """
             public enum UserProfile: ModuleProtocol {
+
                 public typealias Input = UserProfileInput
 
                 public typealias Output = UserProfileOutput

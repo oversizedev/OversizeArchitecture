@@ -552,6 +552,9 @@ struct ViewModelMacroTests {
             """,
             expandedSource: """
             public actor ProductEditViewModel: ViewModelProtocol {
+                func onAppear() async {}
+                func onTapSave() async {}
+
                 @MainActor
                 public var state: ProductEdit.ViewState
 
@@ -565,9 +568,6 @@ struct ViewModelMacroTests {
                     self.input = input
                     self.output = output
                 }
-
-                func onAppear() async {}
-                func onTapSave() async {}
 
                 public func handleAction(_ action: Action) async {
                     switch action {
