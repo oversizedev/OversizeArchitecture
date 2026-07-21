@@ -29,11 +29,15 @@ public extension ModuleProtocol where ViewScene: View {
         input: Input? = nil,
         output: Output? = nil
     ) -> some View {
+        // `.id(cacheKey)` forces SwiftUI to give the `ModuleHost` a new identity when the
+        // key changes, so its `@StateObject` is recreated instead of keeping the previous
+        // instance (with stale `input`/`output`) alive under the caller's stable view identity.
         ModuleHost<Self>(
             input: input,
             output: output,
             cacheKey: cacheKey
         )
+        .id(cacheKey)
     }
 }
 

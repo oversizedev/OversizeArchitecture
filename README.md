@@ -261,7 +261,9 @@ struct ContentView: View {
                 input: NoteListInput(),
                 output: NoteListOutput(
                     onSelectNote: Callback { id in
-                        selectedNoteId = id
+                        Task { @MainActor in
+                            selectedNoteId = id
+                        }
                     }
                 )
             )
@@ -355,7 +357,7 @@ NoteDetail.buildCached(cacheKey: note.id.uuidString, input: NoteDetailInput(note
 ## Requirements
 
 - Swift 6.0+
-- iOS 16.0+
+- iOS 17.0+
 - macOS 14.0+
-- tvOS 16.0+
+- tvOS 17.0+
 - watchOS 10.0+

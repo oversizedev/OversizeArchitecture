@@ -62,7 +62,8 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
 
         let moduleType = extractModuleType(from: node)
         let onMethods = extractOnMethods(from: declGroup)
-        let handleActionMethod = generateHandleActionMethod(from: onMethods)
+        let isTypeGloballyIsolated = declarationHasExplicitGlobalActorAttribute(declGroup)
+        let handleActionMethod = generateHandleActionMethod(from: onMethods, isTypeGloballyIsolated: isTypeGloballyIsolated)
 
         var members: [DeclSyntax] = []
 
@@ -144,12 +145,8 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
         method.signature.effectSpecifiers?.asyncSpecifier != nil
     }
 
-    /// A method explicitly isolated to a global actor (e.g. `@MainActor`, or a qualified
-    /// custom global actor such as `@Namespace.UIActor`) needs an actor hop from the
-    /// generated, non-isolated `handleAction`, so `await` must be kept even though the
-    /// method itself is not `async`.
-    private static func methodHasExplicitGlobalActorAttribute(_ method: FunctionDeclSyntax) -> Bool {
-        method.attributes.contains {
+    private static func hasExplicitGlobalActorAttribute(_ attributes: AttributeListSyntax) -> Bool {
+        attributes.contains {
             guard case let .attribute(attr) = $0 else { return false }
             let lastComponent: String? = if let ident = attr.attributeName.as(IdentifierTypeSyntax.self) {
                 ident.name.text
@@ -163,7 +160,36 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
         }
     }
 
-    private static func generateHandleActionMethod(from methods: [FunctionDeclSyntax]) -> FunctionDeclSyntax {
+    /// A method explicitly isolated to a global actor (e.g. `@MainActor`, or a qualified
+    /// custom global actor such as `@Namespace.UIActor`) needs an actor hop from the
+    /// generated, non-isolated `handleAction`, so `await` must be kept even though the
+    /// method itself is not `async`.
+    private static func methodHasExplicitGlobalActorAttribute(_ method: FunctionDeclSyntax) -> Bool {
+        hasExplicitGlobalActorAttribute(method.attributes)
+    }
+
+    /// Mirrors `methodHasExplicitGlobalActorAttribute` for isolation declared on the
+    /// enclosing class/actor itself, which applies to every member without repeating
+    /// the attribute on each method.
+    ///
+    /// This can't catch isolation inferred purely from witnessing a global-actor-isolated
+    /// protocol requirement (no attribute appears anywhere in source in that case) — that
+    /// requires type-checking information a syntax-only macro doesn't have. Callers relying
+    /// on that inference should annotate the method explicitly to keep `handleAction` correct.
+    private static func declarationHasExplicitGlobalActorAttribute(_ declaration: some DeclGroupSyntax) -> Bool {
+        if let classDecl = declaration.as(ClassDeclSyntax.self) {
+            return hasExplicitGlobalActorAttribute(classDecl.attributes)
+        }
+        if let actorDecl = declaration.as(ActorDeclSyntax.self) {
+            return hasExplicitGlobalActorAttribute(actorDecl.attributes)
+        }
+        return false
+    }
+
+    private static func generateHandleActionMethod(
+        from methods: [FunctionDeclSyntax],
+        isTypeGloballyIsolated: Bool
+    ) -> FunctionDeclSyntax {
         if methods.isEmpty {
             return try! FunctionDeclSyntax(
                 """
@@ -178,7 +204,7 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
         for method in methods {
             let methodName = method.name.text
             let caseName = methodName
-            let needsAwait = methodIsAsync(method) || methodHasExplicitGlobalActorAttribute(method)
+            let needsAwait = methodIsAsync(method) || isTypeGloballyIsolated || methodHasExplicitGlobalActorAttribute(method)
             let callPrefix = needsAwait ? "await " : ""
 
             if method.signature.parameterClause.parameters.isEmpty {

@@ -675,4 +675,49 @@ struct ViewModelMacroTests {
             macros: testMacros
         )
     }
+
+    @Test("Synchronous on methods keep await when the whole type is globally isolated")
+    func synchronousOnMethodsKeepAwaitWhenTypeIsGloballyIsolated() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro
+            @MainActor
+            public class TestViewModel: ViewModelProtocol {
+                public var state: TestViewState
+
+                public init(state: TestViewState) {
+                    self.state = state
+                }
+
+                func onTapSave() {}
+            }
+            """,
+            expandedSource: """
+            @MainActor
+            public class TestViewModel: ViewModelProtocol {
+                public var state: TestViewState
+
+                public init(state: TestViewState) {
+                    self.state = state
+                }
+
+                func onTapSave() {}
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case .onTapSave:
+                        await onTapSave()
+                    }
+                }
+            }
+
+            extension TestViewModel {
+                public enum Action: Sendable {
+                    case onTapSave
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
 }

@@ -13,8 +13,8 @@ public final class Reducer<ViewModel: ViewModelProtocol>: Sendable {
     }
 
     public func callAsFunction(_ action: ViewModel.Action) {
-        Task { [weak self] in
-            await self?.viewModel.handleAction(action)
+        Task {
+            await self.viewModel.handleAction(action)
         }
     }
 }
