@@ -354,6 +354,45 @@ NoteDetail.buildCached(cacheKey: note.id.uuidString, input: NoteDetailInput(note
 
 ---
 
+## Sending Actions
+
+`Reducer` is `@MainActor`. Actions enter the ViewModel in the order they are sent. A long action does not block the next one: once it suspends at an `await`, the following actions run, as usual for actor reentrancy.
+
+```swift
+reducer(.onTapSave)                      // fire and forget, returns the Task
+.task { await reducer.send(.onAppear) }  // waits; cancelled together with the view's task
+reducer.cancelAll()                      // explicit cancellation of running actions
+```
+
+Running actions are never cancelled automatically when the module goes away.
+
+---
+
+## Testing
+
+Add the `OversizeArchitectureTesting` product to your test target. `ModuleTestHost` builds the module's ViewState, ViewModel and Reducer without a View, so screens can be tested headless with `swift test`.
+
+```swift
+import OversizeArchitectureTesting
+import Testing
+
+@MainActor
+struct NoteListTests {
+    @Test
+    func loadsNotes() async {
+        let host = ModuleTestHost<NoteList>(input: NoteListInput(filter: .archived))
+
+        await host.send(.onAppear)
+
+        #expect(host.state.notes.isEmpty == false)
+    }
+}
+```
+
+`send` runs the actions one after another and waits for each of them to finish.
+
+---
+
 ## Requirements
 
 - Swift 6.0+

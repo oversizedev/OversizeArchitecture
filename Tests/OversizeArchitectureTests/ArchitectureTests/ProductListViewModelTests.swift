@@ -5,130 +5,88 @@
 
 import Foundation
 @testable import OversizeArchitecture
+import OversizeArchitectureTesting
 import Testing
 
+@MainActor
 struct ProductListViewModelTests {
-    private func createViewModel(
-        input: ProductListInput?,
-        output: ProductListOutput? = nil
-    ) async -> (ProductListViewModel, ProductListViewState) {
-        let state = await MainActor.run { ProductListViewState(input: input) }
-        let viewModel = await ProductListViewModel(
-            state: state,
-            input: input,
-            output: output
-        )
-        return (viewModel, state)
-    }
-
     @Test("Initialization with all filter")
-    func initializationWithAllFilter() async {
-        let input = ProductListInput(filterType: .all)
+    func initializationWithAllFilter() {
+        let host = ModuleTestHost<ProductList>(input: ProductListInput(filterType: .all))
 
-        let (viewModel, _) = await createViewModel(input: input)
-
-        await MainActor.run {
-            let state = viewModel.state
-            #expect(state.filterType == .all)
-            #expect(state.title == "All Products")
-        }
+        #expect(host.state.filterType == .all)
+        #expect(host.state.title == "All Products")
     }
 
     @Test("Initialization with favorites filter")
-    func initializationWithFavoritesFilter() async {
-        let input = ProductListInput(filterType: .favorites)
+    func initializationWithFavoritesFilter() {
+        let host = ModuleTestHost<ProductList>(input: ProductListInput(filterType: .favorites))
 
-        let (viewModel, _) = await createViewModel(input: input)
-
-        await MainActor.run {
-            let state = viewModel.state
-            #expect(state.filterType == .favorites)
-            #expect(state.title == "Favorites")
-        }
+        #expect(host.state.filterType == .favorites)
+        #expect(host.state.title == "Favorites")
     }
 
     @Test("Initialization with nil input defaults to all")
-    func initializationWithNilInputDefaultsToAll() async {
-        let (viewModel, _) = await createViewModel(input: nil)
+    func initializationWithNilInputDefaultsToAll() {
+        let host = ModuleTestHost<ProductList>()
 
-        await MainActor.run {
-            let state = viewModel.state
-            #expect(state.filterType == .all)
-            #expect(state.title == "All Products")
-        }
+        #expect(host.state.filterType == .all)
+        #expect(host.state.title == "All Products")
     }
 
     @Test("All filter type cases work correctly", arguments: ProductListInput.FilterType.allCases)
-    func allFilterTypeCasesWorkCorrectly(filterType: ProductListInput.FilterType) async {
-        let input = ProductListInput(filterType: filterType)
-        let (viewModel, _) = await createViewModel(input: input)
+    func allFilterTypeCasesWorkCorrectly(filterType: ProductListInput.FilterType) {
+        let host = ModuleTestHost<ProductList>(input: ProductListInput(filterType: filterType))
 
-        await MainActor.run {
-            let state = viewModel.state
-            #expect(state.filterType == filterType)
-
-            let expectedTitle = filterType == .all ? "All Products" : "Favorites"
-            #expect(state.title == expectedTitle)
-        }
+        let expectedTitle = filterType == .all ? "All Products" : "Favorites"
+        #expect(host.state.filterType == filterType)
+        #expect(host.state.title == expectedTitle)
     }
 
-    @Test("OnAppear method maintains state")
-    func onAppearMethodMaintainsState() async {
-        let input = ProductListInput(filterType: .all)
-        let (viewModel, _) = await createViewModel(input: input)
+    @Test("OnAppear action maintains state")
+    func onAppearActionMaintainsState() async {
+        let host = ModuleTestHost<ProductList>(input: ProductListInput(filterType: .all))
 
-        await viewModel.onAppear()
+        await host.send(.onAppear)
 
-        await MainActor.run {
-            let state = viewModel.state
-            #expect(state.filterType == .all)
-            #expect(state.title == "All Products")
-        }
+        #expect(host.state.filterType == .all)
+        #expect(host.state.title == "All Products")
     }
 
     @Test("ViewModel works with output")
     func viewModelWorksWithOutput() async {
-        let input = ProductListInput(filterType: .all)
-        let output = ProductListOutput()
+        let host = ModuleTestHost<ProductList>(
+            input: ProductListInput(filterType: .all),
+            output: ProductListOutput()
+        )
 
-        let (viewModel, _) = await createViewModel(input: input, output: output)
+        await host.send(.onAppear)
 
-        await viewModel.onAppear()
-
-        await MainActor.run {
-            let state = viewModel.state
-            #expect(state.filterType == .all)
-            #expect(state.title == "All Products")
-        }
+        #expect(host.state.filterType == .all)
+        #expect(host.state.title == "All Products")
     }
 
     @Test("ViewModel works without output")
     func viewModelWorksWithoutOutput() async {
-        let input = ProductListInput(filterType: .favorites)
-        let (viewModel, _) = await createViewModel(input: input)
+        let host = ModuleTestHost<ProductList>(input: ProductListInput(filterType: .favorites))
 
-        await viewModel.onAppear()
+        await host.send(.onAppear)
 
-        await MainActor.run {
-            let state = viewModel.state
-            #expect(state.filterType == .favorites)
-            #expect(state.title == "Favorites")
-        }
+        #expect(host.state.filterType == .favorites)
+        #expect(host.state.title == "Favorites")
     }
 
-    @Test("Multiple onAppear calls work correctly")
-    func multipleOnAppearCallsWorkCorrectly() async {
-        let input = ProductListInput(filterType: .all)
-        let (viewModel, _) = await createViewModel(input: input, output: ProductListOutput())
+    @Test("Multiple onAppear actions work correctly")
+    func multipleOnAppearActionsWorkCorrectly() async {
+        let host = ModuleTestHost<ProductList>(
+            input: ProductListInput(filterType: .all),
+            output: ProductListOutput()
+        )
 
-        await viewModel.onAppear()
-        await viewModel.onAppear()
-        await viewModel.onAppear()
+        await host.send(.onAppear, .onAppear, .onAppear)
 
-        await MainActor.run {
-            let state = viewModel.state
-            #expect(state.filterType == .all)
-            #expect(state.title == "All Products")
-        }
+        #expect(host.state.filterType == .all)
+        #expect(host.state.title == "All Products")
+        #expect(host.reducer.pendingTaskCount == 0)
     }
 }
