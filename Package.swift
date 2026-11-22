@@ -12,6 +12,10 @@ let package = Package(
             name: "OversizeArchitecture",
             targets: ["OversizeArchitecture"]
         ),
+        .library(
+            name: "OversizeArchitectureTesting",
+            targets: ["OversizeArchitectureTesting"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax", "600.0.0" ..< "605.0.0")
@@ -25,10 +29,12 @@ let package = Package(
             ]
         ),
         .target(name: "OversizeArchitecture", dependencies: ["OversizeArchitectureMacros"]),
+        .target(name: "OversizeArchitectureTesting", dependencies: ["OversizeArchitecture"]),
         .testTarget(
             name: "OversizeArchitectureTests",
             dependencies: [
                 "OversizeArchitecture",
+                "OversizeArchitectureTesting",
                 "OversizeArchitectureMacros",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
             ]
