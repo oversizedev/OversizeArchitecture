@@ -462,6 +462,99 @@ Invalid JSON throws a `DecodingError` before anything is sent.
 
 ---
 
+## Module Registry and Debug Server
+
+An agent or a script on your Mac can read the state of screens in a running app and send them actions: the app keeps a registry of modules on screen, and the `OversizeArchitectureDebug` product serves it on a local socket. Both work only in Debug builds. In Release the API still compiles but does nothing.
+
+### Registry
+
+`ModuleRegistry` is a `@MainActor` list of the modules currently on screen. A module built with `build` or `buildCached` registers in `onAppear` and unregisters in `onDisappear`, but only when a registry is in the environment:
+
+```swift
+let registry = ModuleRegistry()
+
+RootView()
+    .moduleRegistry(registry)
+
+registry.modules              // [RegisteredModule]: id, name, capabilities
+try registry.snapshot(of: id) // JSONValue, needs IntrospectableViewState
+try await registry.send(json: Data(#"{"onAppear":{}}"#.utf8), to: id)
+```
+
+Each entry has a per-instance `id` and the module name (`"NoteList"`), plus three capabilities:
+- `snapshot()` when the ViewState conforms to `IntrospectableViewState`;
+- `send(json:)` when the `Action` is `Decodable`, for example a `@ViewModel(introspectable: true)` one. It waits until the ViewModel returns from the action;
+- `actionDescriptors` when the `Action` is `IntrospectableAction`.
+
+The registry does not keep a module alive. A screen covered by a pushed screen disappears from the registry until it is shown again.
+
+In tests, register a `ModuleTestHost` without a View:
+
+```swift
+let registry = ModuleRegistry()
+let host = ModuleTestHost<NoteList>()
+host.register(in: registry)
+try await registry.send(json: Data(#"{"onAppear":{}}"#.utf8), to: host.id)
+```
+
+### Debug server
+
+Add the `OversizeArchitectureDebug` product to the app target and start the server at the root:
+
+```swift
+import OversizeArchitectureDebug
+
+WindowGroup {
+    RootView()
+        .moduleDebugServer()
+}
+```
+
+The modifier creates a registry, puts it into the environment and listens on `127.0.0.1:47800` while the root view is alive. The iOS Simulator shares the Mac's loopback, so tools on the Mac reach the app directly. A sandboxed macOS app needs the `com.apple.security.network.server` entitlement. To use a different port or require a token, pass a configuration: `.moduleDebugServer(DebugServer.Configuration(port: 47801, token: "secret"))`. Port `0` picks a free port and logs it. For full control, create a `DebugServer(registry:configuration:)` yourself and call `start()` and `stop()`.
+
+### Protocol
+
+The server speaks JSON-RPC 2.0, one compact JSON message per line (UTF-8, `\n`, up to 1 MB):
+
+| Method | Params | Result |
+| --- | --- | --- |
+| `app.hello` | `{"token"?}` | bundle id, process, `protocolVersion`, methods |
+| `modules.list` | — | `{"modules":[{"id","name","stateIntrospectable","acceptsActions","describesActions"}]}` |
+| `state.get` | `{"module"}` | `{"module","state"}` |
+| `actions.list` | `{"module"}` | `{"module","actions":[ActionDescriptor]}` |
+| `action.send` | `{"module","action"}` | `{"module","state"}`, the state after the action |
+
+`module` is an instance id or a module name. A name resolves to the most recently shown module with that name. Errors use the standard JSON-RPC codes plus `-32001` module not found, `-32002` module gone, `-32003` capability not supported, `-32004` action does not decode and `-32005` unauthorized. With a token, a connection must call `app.hello` with it first.
+
+```
+→ {"jsonrpc":"2.0","id":1,"method":"action.send","params":{"module":"NoteList","action":{"onAppear":{}}}}
+← {"id":1,"jsonrpc":"2.0","result":{"module":"6F96…","state":{"isLoading":false,"notes":[]}}}
+```
+
+### CLI and MCP
+
+The package includes a macOS command line tool:
+
+```bash
+swift run oversize-debug list
+swift run oversize-debug state NoteList
+swift run oversize-debug actions NoteList
+swift run oversize-debug send NoteList '{"onSelect":{"_0":"6F9619FF-8B86-D011-B42D-00C04FC964FF"}}'
+```
+
+`--host`, `--port` and `--token` (or `OVERSIZE_DEBUG_HOST`, `OVERSIZE_DEBUG_PORT`, `OVERSIZE_DEBUG_TOKEN`) choose the app.
+
+`oversize-debug mcp` runs an MCP server over stdio with the tools `app_info`, `list_modules`, `get_state`, `list_actions` and `send_action`. Register it with an agent, for example in Claude Code:
+
+```bash
+swift build -c release --product oversize-debug
+claude mcp add oversize-debug -- /path/to/OversizeArchitecture/.build/release/oversize-debug mcp
+```
+
+The MCP server connects to the app when a tool is called and reconnects after the app restarts.
+
+---
+
 ## Requirements
 
 - Swift 6.0+

@@ -45,6 +45,7 @@ public extension ModuleProtocol where ViewScene: View {
 
 @MainActor
 private final class ModuleInstance<Module: ModuleProtocol>: ObservableObject where Module.ViewScene: View {
+    let id = UUID()
     let viewState: Module.ViewState
     let viewModel: Module.ViewModel
     let reducer: Reducer<Module.ViewModel>
@@ -94,5 +95,50 @@ private struct ModuleHost<Module: ModuleProtocol>: View where Module.ViewScene: 
             viewState: instance.viewState,
             reducer: instance.reducer
         )
+        .modifier(ModuleRegistration(instance: instance))
     }
+}
+
+// MARK: - Registry
+
+private struct ModuleRegistration<Module: ModuleProtocol>: ViewModifier where Module.ViewScene: View {
+    let instance: ModuleInstance<Module>
+
+    #if DEBUG
+    @Environment(\.moduleRegistry) private var registry
+    @State private var isVisible = false
+    @State private var activeRegistry: ModuleRegistry?
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                isVisible = true
+                attach(to: registry)
+            }
+            .onDisappear {
+                isVisible = false
+                attach(to: nil)
+            }
+            .onChange(of: registry.map(ObjectIdentifier.init)) {
+                guard isVisible else { return }
+                attach(to: registry)
+            }
+    }
+
+    private func attach(to target: ModuleRegistry?) {
+        guard activeRegistry !== target else { return }
+        activeRegistry?.unregister(id: instance.id)
+        target?.register(
+            Module.self,
+            id: instance.id,
+            viewState: instance.viewState,
+            reducer: instance.reducer
+        )
+        activeRegistry = target
+    }
+    #else
+    func body(content: Content) -> some View {
+        content
+    }
+    #endif
 }

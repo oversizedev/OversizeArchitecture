@@ -16,6 +16,14 @@ let package = Package(
             name: "OversizeArchitectureTesting",
             targets: ["OversizeArchitectureTesting"]
         ),
+        .library(
+            name: "OversizeArchitectureDebug",
+            targets: ["OversizeArchitectureDebug"]
+        ),
+        .executable(
+            name: "oversize-debug",
+            targets: ["OversizeArchitectureDebugCLI"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax", "600.0.0" ..< "605.0.0")
@@ -30,11 +38,19 @@ let package = Package(
         ),
         .target(name: "OversizeArchitecture", dependencies: ["OversizeArchitectureMacros"]),
         .target(name: "OversizeArchitectureTesting", dependencies: ["OversizeArchitecture"]),
+        .target(name: "OversizeArchitectureDebug", dependencies: ["OversizeArchitecture"]),
+        .target(name: "OversizeArchitectureDebugClient", dependencies: ["OversizeArchitecture", "OversizeArchitectureDebug"]),
+        .executableTarget(
+            name: "OversizeArchitectureDebugCLI",
+            dependencies: ["OversizeArchitecture", "OversizeArchitectureDebug", "OversizeArchitectureDebugClient"]
+        ),
         .testTarget(
             name: "OversizeArchitectureTests",
             dependencies: [
                 "OversizeArchitecture",
                 "OversizeArchitectureTesting",
+                "OversizeArchitectureDebug",
+                "OversizeArchitectureDebugClient",
                 "OversizeArchitectureMacros",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
             ]
