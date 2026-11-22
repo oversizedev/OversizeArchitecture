@@ -3,10 +3,12 @@
 // ModuleTestHost.swift, created on 13.11.2026
 //
 
+import Foundation
 import OversizeArchitecture
 
 @MainActor
 public final class ModuleTestHost<Module: ModuleProtocol> {
+    public let id = UUID()
     public let state: Module.ViewState
     public let viewModel: Module.ViewModel
     public let reducer: Reducer<Module.ViewModel>
@@ -21,6 +23,18 @@ public final class ModuleTestHost<Module: ModuleProtocol> {
         for action in actions {
             await reducer.send(action)
         }
+    }
+}
+
+// MARK: - Registry
+
+public extension ModuleTestHost {
+    func register(in registry: ModuleRegistry) {
+        registry.register(Module.self, id: id, viewState: state, reducer: reducer)
+    }
+
+    func unregister(from registry: ModuleRegistry) {
+        registry.unregister(id: id)
     }
 }
 
