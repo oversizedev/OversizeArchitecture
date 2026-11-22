@@ -356,7 +356,7 @@ NoteDetail.buildCached(cacheKey: note.id.uuidString, input: NoteDetailInput(note
 
 ## Sending Actions
 
-`Reducer` is `@MainActor`. Actions enter the ViewModel in the order they are sent. A long action does not block the next one: once it suspends at an `await`, the following actions run, as usual for actor reentrancy.
+`Reducer` is `@MainActor`. For an `actor` ViewModel or one isolated to a global actor such as `@MainActor`, actions enter the ViewModel in the order they are sent. A long action does not block the next one: once it suspends at an `await`, the following actions run, as usual for actor reentrancy. A nonisolated `Sendable` class runs `handleAction` on the concurrent executor, so its actions have no ordering guarantee; use an actor when order matters.
 
 ```swift
 reducer(.onTapSave)                      // fire and forget, returns the Task
