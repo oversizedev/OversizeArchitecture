@@ -6,7 +6,7 @@
 @testable import OversizeArchitecture
 import SwiftUI
 
-@ViewModel(module: ActionLog.self)
+@ViewModel(module: ActionLog.self, introspectable: true)
 public actor ActionLogViewModel: ViewModelProtocol {
     private(set) var receivedIndices: [Int] = []
 

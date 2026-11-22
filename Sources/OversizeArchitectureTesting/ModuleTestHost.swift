@@ -23,3 +23,19 @@ public final class ModuleTestHost<Module: ModuleProtocol> {
         }
     }
 }
+
+// MARK: - Introspection
+
+public extension ModuleTestHost where Module.ViewModel.Action: Decodable {
+    func send(json actions: String...) async throws {
+        for action in actions {
+            try await reducer.send(json: action)
+        }
+    }
+}
+
+public extension ModuleTestHost where Module.ViewState: IntrospectableViewState {
+    func snapshot() -> JSONValue {
+        state.snapshot()
+    }
+}

@@ -21,8 +21,10 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
             throw ViewModelMacroError.onlyApplicableToClassOrActor
         }
 
+        let isIntrospectable = try extractIntrospectable(from: node)
         let onMethods = extractOnMethods(from: declGroup)
         let actionCases = generateActionCases(from: onMethods)
+        let introspectionMembers = isIntrospectable ? generateIntrospectionMembers(from: onMethods) : []
 
         let actionEnum = EnumDeclSyntax(
             modifiers: DeclModifierListSyntax {
@@ -31,10 +33,16 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
             name: "Action",
             inheritanceClause: InheritanceClauseSyntax {
                 InheritedTypeSyntax(type: IdentifierTypeSyntax(name: "Sendable"))
+                if isIntrospectable {
+                    InheritedTypeSyntax(type: IdentifierTypeSyntax(name: "IntrospectableAction"))
+                }
             }
         ) {
             for actionCase in actionCases {
                 MemberBlockItemSyntax(decl: actionCase)
+            }
+            for member in introspectionMembers {
+                MemberBlockItemSyntax(decl: member)
             }
         }
 
@@ -252,11 +260,14 @@ public struct ViewModelMacro: ExtensionMacro, MemberMacro {
 
 enum ViewModelMacroError: Error, CustomStringConvertible {
     case onlyApplicableToClassOrActor
+    case introspectableMustBeBooleanLiteral
 
     var description: String {
         switch self {
         case .onlyApplicableToClassOrActor:
             "@ViewModelMacro can only be applied to classes or actors"
+        case .introspectableMustBeBooleanLiteral:
+            "'introspectable' must be a boolean literal"
         }
     }
 }
@@ -287,6 +298,84 @@ private extension ViewModelMacro {
             }
         }
         return nil
+    }
+
+    static func extractIntrospectable(from node: AttributeSyntax) throws -> Bool {
+        guard let arguments = node.arguments?.as(LabeledExprListSyntax.self),
+              let argument = arguments.first(where: { $0.label?.text == "introspectable" })
+        else {
+            return false
+        }
+        guard let literal = argument.expression.as(BooleanLiteralExprSyntax.self) else {
+            throw ViewModelMacroError.introspectableMustBeBooleanLiteral
+        }
+        return literal.literal.tokenKind == .keyword(.true)
+    }
+
+    static func generateIntrospectionMembers(from methods: [FunctionDeclSyntax]) -> [DeclSyntax] {
+        guard !methods.isEmpty else {
+            return [
+                DeclSyntax(
+                    """
+                    public static var descriptors: [ActionDescriptor] {
+                        []
+                    }
+                    """
+                ),
+                DeclSyntax(
+                    """
+                    public init(from decoder: any Decoder) throws {
+                        throw DecodingError.dataCorrupted(
+                            DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Action has no cases")
+                        )
+                    }
+                    """
+                ),
+                DeclSyntax(
+                    """
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        }
+                    }
+                    """
+                )
+            ]
+        }
+
+        let descriptors = methods.map { method in
+            let name = stringLiteral(method.name.text)
+            let parameters = method.signature.parameterClause.parameters
+            guard !parameters.isEmpty else {
+                return "        ActionDescriptor(name: \(name))"
+            }
+            let parameterDescriptors = parameters.enumerated().map { index, parameter in
+                let labelText = unescapedIdentifier(parameter.firstName.text)
+                let label = labelText == "_" ? "nil" : stringLiteral(labelText)
+                let codingKey = stringLiteral(labelText == "_" ? "_\(index)" : labelText)
+                let type = stringLiteral(parameter.type.trimmedDescription)
+                return "            ActionDescriptor.Parameter(label: \(label), codingKey: \(codingKey), type: \(type))"
+            }
+            return "        ActionDescriptor(name: \(name), parameters: [\n\(parameterDescriptors.joined(separator: ",\n"))\n        ])"
+        }
+
+        let body = [
+            "public static var descriptors: [ActionDescriptor] {",
+            "    [",
+            descriptors.joined(separator: ",\n"),
+            "    ]",
+            "}"
+        ].joined(separator: "\n")
+
+        return [DeclSyntax("\(raw: body)")]
+    }
+
+    static func unescapedIdentifier(_ text: String) -> String {
+        guard text.count > 2, text.hasPrefix("`"), text.hasSuffix("`") else { return text }
+        return String(text.dropFirst().dropLast())
+    }
+
+    static func stringLiteral(_ text: String) -> String {
+        StringLiteralExprSyntax(content: text).description
     }
 
     static func generateModuleProperties(module: String) -> [DeclSyntax] {
