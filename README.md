@@ -393,6 +393,75 @@ struct NoteListTests {
 
 ---
 
+## Introspection
+
+Introspection lets tests and tools drive a screen through data: send an action as JSON, then read the ViewState as JSON.
+
+### Codable actions
+
+Opt in on the ViewModel:
+
+```swift
+@ViewModel(module: NoteList.self, introspectable: true)
+public actor NoteListViewModel: ViewModelProtocol {
+    func onAppear() async { ... }
+    func onSelect(_ id: UUID) async { ... }
+    func onRename(id: UUID, title: String) async { ... }
+}
+```
+
+The generated `Action` then conforms to `IntrospectableAction` (`Codable`). It uses Swift's synthesized enum coding:
+
+```json
+{"onAppear":{}}
+{"onSelect":{"_0":"6F9619FF-8B86-D011-B42D-00C04FC964FF"}}
+{"onRename":{"id":"6F9619FF-8B86-D011-B42D-00C04FC964FF","title":"Groceries"}}
+```
+
+Unlabeled parameters use `_<position>` keys. Every parameter type must be `Codable`, otherwise the ViewModel does not compile. Keep `introspectable` off for view models that take callbacks or other non-Codable values.
+
+`Action.descriptors` lists the available actions with their parameter labels, coding keys and types as written in source:
+
+```swift
+NoteList.ViewModel.Action.descriptors
+// [ActionDescriptor(name: "onAppear", parameters: []),
+//  ActionDescriptor(name: "onSelect", parameters: [.init(label: nil, codingKey: "_0", type: "UUID")]), ...]
+```
+
+The type strings are documentation, not a JSON schema.
+
+### State snapshots
+
+Conform the ViewState to `IntrospectableViewState` to get `snapshot() -> JSONValue` and `snapshotJSON() -> Data` (sorted keys):
+
+```swift
+@Observable
+public final class NoteListViewState: IntrospectableViewState { ... }
+```
+
+The default snapshot reflects stored properties with `Mirror`:
+- Observation's `_` prefix and registrar are removed.
+- Computed properties are not included, private stored properties are.
+- `Date` becomes an ISO 8601 string, `URL`, `UUID` and `Decimal` become strings.
+- Enums become `"case"` or `{"case": payload}`.
+- Reference cycles become `"<cycle>"` and nesting deeper than 16 levels becomes `"<truncated>"`.
+
+Implement `snapshot()` yourself when you need a stable or redacted shape.
+
+### Sending JSON
+
+```swift
+try await reducer.send(json: #"{"onSelect":{"_0":"6F9619FF-8B86-D011-B42D-00C04FC964FF"}}"#)
+
+let host = ModuleTestHost<NoteList>()
+try await host.send(json: #"{"onAppear":{}}"#)
+#expect(host.snapshot() == ["notes": [], "isLoading": false])
+```
+
+Invalid JSON throws a `DecodingError` before anything is sent.
+
+---
+
 ## Requirements
 
 - Swift 6.0+

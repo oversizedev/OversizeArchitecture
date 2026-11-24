@@ -720,4 +720,252 @@ struct ViewModelMacroTests {
             macros: testMacros
         )
     }
+
+    // MARK: - Introspection
+
+    @Test("Introspectable ViewModel generates Codable action with descriptors")
+    func introspectableGeneratesDescriptors() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro(introspectable: true)
+            public actor TestViewModel {
+                func onAppear() async {}
+                func onNameChanged(name: String) async {}
+                func onValueChanged(_ value: Int) async {}
+                func onMix(_ first: [String: Int], second: String?) async {}
+            }
+            """,
+            expandedSource: """
+            public actor TestViewModel {
+                func onAppear() async {}
+                func onNameChanged(name: String) async {}
+                func onValueChanged(_ value: Int) async {}
+                func onMix(_ first: [String: Int], second: String?) async {}
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case .onAppear:
+                        await onAppear()
+                    case let .onNameChanged(name):
+                        await onNameChanged(name: name)
+                    case let .onValueChanged(value):
+                        await onValueChanged(value)
+                    case let .onMix(first, second):
+                        await onMix(first, second: second)
+                    }
+                }
+            }
+
+            extension TestViewModel {
+                public enum Action: Sendable, IntrospectableAction {
+                    case onAppear
+                    case onNameChanged(name: String)
+                    case onValueChanged(Int)
+                    case onMix([String: Int], second: String?)
+                    public static var descriptors: [ActionDescriptor] {
+                        [
+                            ActionDescriptor(name: "onAppear"),
+                            ActionDescriptor(name: "onNameChanged", parameters: [
+                                ActionDescriptor.Parameter(label: "name", codingKey: "name", type: "String")
+                            ]),
+                            ActionDescriptor(name: "onValueChanged", parameters: [
+                                ActionDescriptor.Parameter(label: nil, codingKey: "_0", type: "Int")
+                            ]),
+                            ActionDescriptor(name: "onMix", parameters: [
+                                ActionDescriptor.Parameter(label: nil, codingKey: "_0", type: "[String: Int]"),
+                                ActionDescriptor.Parameter(label: "second", codingKey: "second", type: "String?")
+                            ])
+                        ]
+                    }
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+
+    @Test("Introspectable descriptors drop backticks from escaped labels")
+    func introspectableDropsBackticks() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro(introspectable: true)
+            public actor TestViewModel {
+                func onSet(`default`: Int) async {}
+            }
+            """,
+            expandedSource: """
+            public actor TestViewModel {
+                func onSet(`default`: Int) async {}
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case let .onSet(`default`):
+                        await onSet(`default`: `default`)
+                    }
+                }
+            }
+
+            extension TestViewModel {
+                public enum Action: Sendable, IntrospectableAction {
+                    case onSet(`default`: Int)
+                    public static var descriptors: [ActionDescriptor] {
+                        [
+                            ActionDescriptor(name: "onSet", parameters: [
+                                ActionDescriptor.Parameter(label: "default", codingKey: "default", type: "Int")
+                            ])
+                        ]
+                    }
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+
+    @Test("Introspectable ViewModel without actions implements Codable manually")
+    func introspectableWithoutActionsImplementsCodable() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro(introspectable: true)
+            public actor TestViewModel {
+                func load() async {}
+            }
+            """,
+            expandedSource: """
+            public actor TestViewModel {
+                func load() async {}
+
+                public func handleAction(_ action: Action) async {
+                }
+            }
+
+            extension TestViewModel {
+                public enum Action: Sendable, IntrospectableAction {
+                    public static var descriptors: [ActionDescriptor] {
+                        []
+                    }
+                    public init(from decoder: any Decoder) throws {
+                        throw DecodingError.dataCorrupted(
+                            DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Action has no cases")
+                        )
+                    }
+                    public func encode(to encoder: any Encoder) throws {
+                        switch self {
+                        }
+                    }
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+
+    @Test("Introspectable false keeps the default expansion")
+    func introspectableFalseKeepsDefaultExpansion() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro(introspectable: false)
+            public actor TestViewModel {
+                func onAppear() async {}
+            }
+            """,
+            expandedSource: """
+            public actor TestViewModel {
+                func onAppear() async {}
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case .onAppear:
+                        await onAppear()
+                    }
+                }
+            }
+
+            extension TestViewModel {
+                public enum Action: Sendable {
+                    case onAppear
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+
+    @Test("Introspectable argument must be a boolean literal")
+    func introspectableMustBeBooleanLiteral() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro(introspectable: isDebug)
+            public actor TestViewModel {
+                func onAppear() async {}
+            }
+            """,
+            expandedSource: """
+            public actor TestViewModel {
+                func onAppear() async {}
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case .onAppear:
+                        await onAppear()
+                    }
+                }
+            }
+            """,
+            diagnostics: [
+                DiagnosticSpec(message: "'introspectable' must be a boolean literal", line: 1, column: 1, severity: .error)
+            ],
+            macros: testMacros
+        )
+    }
+
+    @Test("Introspectable ViewModel with module keeps generated members")
+    func introspectableWithModule() {
+        assertMacroExpansion(
+            """
+            @ViewModelMacro(module: ProductEdit.self, introspectable: true)
+            public actor ProductEditViewModel: ViewModelProtocol {
+                func onTapSave() async {}
+            }
+            """,
+            expandedSource: """
+            public actor ProductEditViewModel: ViewModelProtocol {
+                func onTapSave() async {}
+
+                @MainActor
+                public var state: ProductEdit.ViewState
+
+                private let input: ProductEdit.Input?
+
+                private let output: ProductEdit.Output?
+
+                @MainActor
+                public init(state: ProductEdit.ViewState, input: ProductEdit.Input?, output: ProductEdit.Output?) {
+                    self.state = state
+                    self.input = input
+                    self.output = output
+                }
+
+                public func handleAction(_ action: Action) async {
+                    switch action {
+                    case .onTapSave:
+                        await onTapSave()
+                    }
+                }
+            }
+
+            extension ProductEditViewModel {
+                public enum Action: Sendable, IntrospectableAction {
+                    case onTapSave
+                    public static var descriptors: [ActionDescriptor] {
+                        [
+                            ActionDescriptor(name: "onTapSave")
+                        ]
+                    }
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
 }

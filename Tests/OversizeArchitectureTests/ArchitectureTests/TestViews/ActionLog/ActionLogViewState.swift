@@ -7,7 +7,7 @@
 import SwiftUI
 
 @Observable
-public final class ActionLogViewState: ViewStateProtocol {
+public final class ActionLogViewState: IntrospectableViewState {
     public let title: String
     public var entries: [String] = []
 
